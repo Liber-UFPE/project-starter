@@ -1,0 +1,11 @@
+@param path: String
+
+@template.layout(
+    title = "404 - Página não encontrada",
+    content = @`
+        @template.sections.top(
+        title = "Página não encontrada",
+        subtext = @`A página que você tentou acessar não foi encontrada: ${path}`
+    )
+    `
+)

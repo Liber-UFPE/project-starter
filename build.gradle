@@ -1,0 +1,166 @@
+plugins {
+    id("org.jetbrains.kotlin.jvm") version "${kotlinVersion}"
+    id("org.jetbrains.kotlin.plugin.allopen") version "${kotlinVersion}"
+    id("com.google.devtools.ksp") version "${kotlinVersion}-1.0.13"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.micronaut.application") version "${micronautVersion}"
+    id("gg.jte.gradle") version "${jteVersion}"
+    id("io.micronaut.aot") version "${micronautVersion}"
+    // Provides better test output
+    id("com.adarshr.test-logger") version "3.2.0"
+    // Code Coverage:
+    // https://github.com/Kotlin/kotlinx-kover
+    id("org.jetbrains.kotlinx.kover") version "0.7.3"
+    // Code Inspections
+    // https://detekt.dev/
+    id("io.gitlab.arturbosch.detekt") version("1.23.0")
+    // Code Inspection: diktat
+    // id("org.cqfn.diktat.diktat-gradle-plugin") version "1.2.5"
+    // Task graph utility
+    // https://github.com/dorongold/gradle-task-tree
+    id("com.dorongold.task-tree") version "2.1.1"
+    // To generate a git.properties file containing git repository metadata
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+}
+
+ext {
+    javaVersion = 17
+    dockerImage = "ghcr.io/liber-ufpe/project-starter"
+}
+
+version = "0.1"
+group = "br.ufpe.liber"
+
+repositories {
+    maven {
+        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        mavenContent { snapshotsOnly() }
+    }
+    mavenCentral()
+}
+
+dependencies {
+    ksp("io.micronaut.serde:micronaut-serde-processor")
+    implementation("io.micronaut:micronaut-aop")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    // Views Dependencies
+    implementation("gg.jte:jte-kotlin:${jteVersion}")
+    implementation("gg.jte:jte-runtime:${jteVersion}")
+    implementation("io.micronaut.views:micronaut-views-jte")
+    jteGenerate "gg.jte:jte-models:${jteVersion}"
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    compileOnly("org.graalvm.nativeimage:svm")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+}
+
+application {
+    mainClass.set("br.ufpe.liber.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion(javaVersion)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy(koverVerify)
+}
+
+tasks {
+    dockerBuild {
+        images = ["${dockerImage}:latest", "${dockerImage}:${project.version}", "${project.name}:latest", "${project.name}:${version}"]
+    }
+
+    dockerBuildNative {
+        images = ["${dockerImage}:latest", "${dockerImage}:${project.version}", "${project.name}:latest", "${project.name}:${version}"]
+    }
+}
+
+tasks.named("dockerfile") {
+    // The default `openjdk` images are deprecated and not maintained.  Eclise Temurim
+    // images are recommended instead:
+    // https://hub.docker.com/_/eclipse-temurin
+    baseImage = "eclipse-temurin:${javaVersion}-jdk-alpine"
+}
+
+tasks.named('dockerfileNative') {
+    // Graal base images are now published here: https://github.com/graalvm/container
+    // The `native-image-community` image is a size compact GraalVM Community Edition
+    // container image with the Native Image support.	.
+    graalImage = "ghcr.io/graalvm/native-image-community:${javaVersion}"
+}
+
+graalvmNative {
+    toolchainDetection = false
+    binaries {
+        main {
+            buildArgs.add('--verbose')
+            // 7GB is what is available when using Github-hosted runners:
+            // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+            buildArgs.add('-J-Xmx7G')
+            buildArgs.add('--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons')
+        }
+    }
+}
+
+micronaut {
+    runtime("netty")
+    testRuntime("kotest5")
+    processing {
+        incremental(true)
+        annotations("br.ufpe.*")
+    }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+    }
+}
+
+
+jte {
+    sourceDirectory = file("src/main/jte").toPath()
+    targetDirectory = file("$buildDir/jte-classes").toPath()
+    trimControlStructures = true
+    packageName = "br.ufpe.liber"
+    generate()
+    jteExtension("gg.jte.models.generator.ModelExtension")
+}
+
+tasks.configureEach {
+    if (["kspKotlin", "inspectRuntimeClasspath"].contains(name)) {
+        dependsOn "generateJte"
+    }
+}
+
+jar {
+    dependsOn precompileJte
+    from fileTree("$buildDir/jte-classes") {
+        include "**/.*.class"
+    }
+}
+
+testlogger {
+    theme 'mocha'
+    showExceptions true
+    showStackTraces true
+}
+
+//diktat {
+//    diktatConfigFile = file("diktat-analysis.yml")
+//    githubActions = System.getenv("GITHUB_ACTIONS")
+//}
