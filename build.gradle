@@ -10,7 +10,7 @@ plugins {
     id("com.adarshr.test-logger") version "3.2.0"
     // Code Coverage:
     // https://github.com/Kotlin/kotlinx-kover
-    id("org.jetbrains.kotlinx.kover") version "0.7.3"
+    id("org.jetbrains.kotlinx.kover") version "0.7.4"
     // Code Inspections
     // https://detekt.dev/
     id("io.gitlab.arturbosch.detekt") version("1.23.0")
