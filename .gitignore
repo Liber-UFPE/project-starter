@@ -32,3 +32,5 @@ out/
 *.iws
 .settings
 .factorypath
+
+jte-classes
