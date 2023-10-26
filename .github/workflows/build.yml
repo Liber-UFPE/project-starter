@@ -9,17 +9,29 @@ on:
 permissions:
   contents: read
 
+env:
+  GRADLE_OPTS: "-Dorg.gradle.console=plain"
+
 jobs:
   compile:
     name: Build / compile
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Liber-UFPE/spring-gradle-build-action@v1
+      - uses: Liber-UFPE/spring-gradle-build-action@v2
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Run testCompile
-        run: ./gradlew compileTestKotlin
+      - name: Starts Gradle Daemon
+        run: ./gradlew
+      # Manually execute the task graph to measure time
+      - run: ./gradlew generateJte
+      - run: ./gradlew kspKotlin
+      - run: ./gradlew processResources
+      - run: ./gradlew compileKotlin
+      - run: ./gradlew compileJava
+      - run: ./gradlew classes
+      - run: ./gradlew kspTestKotlin
+      - run: ./gradlew compileTestKotlin
 
   detekt:
     name: Code Analysis / detekt
@@ -49,16 +61,36 @@ jobs:
       - name: run ktlin
         run: ktlint --relative >> $GITHUB_STEP_SUMMARY
 
-#  diktat:
-#    name: Code Analysis / diktat
-#    runs-on: ubuntu-latest
-#    needs:
-#      - compile
-#    steps:
-#      - uses: actions/checkout@v4
-#      - uses: Liber-UFPE/spring-gradle-build-action@v1
-#      - name: Run diktatCheck
-#        run: ./gradlew diktatCheck mergeDiktatReports
+  accessibility-test:
+    name: Tests / Accessibility
+    runs-on: ubuntu-latest
+    # Since this job is experimental
+    continue-on-error: true
+    needs:
+      - detekt
+      - ktlint
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Liber-UFPE/spring-gradle-build-action@v2
+      # Manually execute the task graph to measure time
+      - run: ./gradlew generateJte
+      - run: ./gradlew kspKotlin
+      - run: ./gradlew processResources
+      - run: ./gradlew compileKotlin
+      - run: ./gradlew compileJava
+      - run: ./gradlew classes
+      - run: ./gradlew kspTestKotlin
+      - run: ./gradlew compileTestKotlin
+      - run: ./gradlew testClasses
+      - run: ./gradlew kspAccessibilityTestKotlin
+      - run: ./gradlew processAccessibilityTestResources
+      - run: ./gradlew compileAccessibilityTestKotlin
+      - run: ./gradlew compileAccessibilityTestJava
+      - run: ./gradlew accessibilityTestClasses
+      - name: Run Accessibility Tests
+        # For some annoying reason, Gradle insists in execute the `test` task
+        # too. -x removes it from the task graph for this execution.
+        run: ./gradlew accessibilityTest
 
   test:
     name: Tests / test
@@ -66,14 +98,21 @@ jobs:
     needs:
       - detekt
       - ktlint
-      # - diktat
     steps:
       - uses: actions/checkout@v4
-      - uses: Liber-UFPE/spring-gradle-build-action@v1
-      - name: Run tests
-        run: ./gradlew test
-      - name: Coverage HTML Report
-        run: ./gradlew koverHtmlReport
+      - uses: Liber-UFPE/spring-gradle-build-action@v2
+      # Manually execute the task graph to measure time
+      - run: ./gradlew generateJte
+      - run: ./gradlew kspKotlin
+      - run: ./gradlew processResources
+      - run: ./gradlew compileKotlin
+      - run: ./gradlew compileJava
+      - run: ./gradlew classes
+      - run: ./gradlew kspTestKotlin
+      - run: ./gradlew compileTestKotlin
+      - run: ./gradlew testClasses
+      - run: ./gradlew test
+      - run: ./gradlew koverHtmlReport
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
       - name: Output Kover summary
@@ -99,9 +138,15 @@ jobs:
       - test
     steps:
       - uses: actions/checkout@v4
-      - uses: Liber-UFPE/spring-gradle-build-action@v1
-      - name: Run build
-        run: ./gradlew build
+      - uses: Liber-UFPE/spring-gradle-build-action@v2
+      # Manually execute the task graph to measure time
+      - run: ./gradlew generateJte
+      - run: ./gradlew kspKotlin
+      - run: ./gradlew processResources
+      - run: ./gradlew compileKotlin
+      - run: ./gradlew compileJava
+      - run: ./gradlew classes
+      - run: ./gradlew shadowJar
 
   build-docker:
     name: Package / Docker / build
@@ -110,6 +155,45 @@ jobs:
       - test
     steps:
       - uses: actions/checkout@v4
-      - uses: Liber-UFPE/spring-gradle-build-action@v1
+      - uses: Liber-UFPE/spring-gradle-build-action@v2
       - name: Run dockerBuild
         run: ./gradlew dockerBuild
+
+  check-if-prod:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    name: Check if prod
+    runs-on: ubuntu-latest
+    needs:
+      - test
+    steps:
+      - run: echo "This is a push to main branch. Following with release and deploy"
+
+  create-release:
+    name: Creates a GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - check-if-prod
+      - build
+    # Docs:
+    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+    permissions:
+      contents: write
+      packages: read # to preserve default permissions
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # `0` indicates all history for all branches and tags.
+          # See https://github.com/actions/checkout#usage.
+          # This is relevant to properly generate git.properties file
+          # when deploying.
+          fetch-depth: 0
+      - uses: Liber-UFPE/spring-gradle-build-action@v2
+      - name: Create Release Package
+        run: ./gradlew clean shadowJar
+      - name: Create Github Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_TITLE=$(./gradlew releaseDate --quiet)
+          TAG_NAME="v${{ github.run_number }}-$(git log HEAD -1 --pretty=format:'%h')"
+          gh release create "$TAG_NAME" ./build/libs/*.jar --title "$RELEASE_TITLE" --generate-notes --latest

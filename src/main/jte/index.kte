@@ -1,18 +1,11 @@
-@template.layout(
-    title = "Início",
-    content = @`
-        @template.sections.top(
+@template.layout(title = "Início", content = @`
+    @template.partials.top(
         title = "Bemvindo ao project-starter",
-        subtext = @`
-            Esse é apenas um template para projetos do Laboratório Liber
-        `
-        )
-        @template.sections.main(
-            content = @`
-            <div class="row mb-2">
-                <p class="lead">Adicione o conteúdo correto para seu projeto.</p>
-            </div>
-            `
-        )
-    `
-)
+        subtext = @`Esse é apenas um template para projetos do Laboratório Liber`
+    )
+    @template.partials.main(content = @`
+        <div class="row mb-2">
+            <p class="lead">Adicione o conteúdo correto para seu projeto.</p>
+        </div>
+    `)
+`)

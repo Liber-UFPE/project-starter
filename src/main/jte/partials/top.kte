@@ -1,5 +1,5 @@
 @param title: String
-@param subtext: gg.jte.Content
+@param subtext: gg.jte.Content = br.ufpe.liber.views.ViewsHelper.emptyContent()
 
 <section class="position-relative overflow-hidden bg-dark primary-content">
   <div class="container">

@@ -1,26 +1,31 @@
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "${kotlinVersion}"
     id("org.jetbrains.kotlin.plugin.allopen") version "${kotlinVersion}"
+    // If needs to add Serialization (to JSON, for example)
+    // id("org.jetbrains.kotlin.plugin.serialization") version "${kotlinVersion}"
     id("com.google.devtools.ksp") version "${kotlinVersion}-1.0.13"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "${micronautVersion}"
     id("gg.jte.gradle") version "${jteVersion}"
-    id("io.micronaut.aot") version "${micronautVersion}"
     // Provides better test output
-    id("com.adarshr.test-logger") version "3.2.0"
+    id("com.adarshr.test-logger") version "4.0.0"
     // Code Coverage:
     // https://github.com/Kotlin/kotlinx-kover
-    id("org.jetbrains.kotlinx.kover") version "0.7.3"
+    id("org.jetbrains.kotlinx.kover") version "0.7.4"
     // Code Inspections
     // https://detekt.dev/
-    id("io.gitlab.arturbosch.detekt") version("1.23.0")
-    // Code Inspection: diktat
-    // id("org.cqfn.diktat.diktat-gradle-plugin") version "1.2.5"
+    id("io.gitlab.arturbosch.detekt") version("1.23.1")
     // Task graph utility
     // https://github.com/dorongold/gradle-task-tree
     id("com.dorongold.task-tree") version "2.1.1"
     // To generate a git.properties file containing git repository metadata
     id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    // Easily add new test sets
+    id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
 ext {
@@ -39,25 +44,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    ksp("io.micronaut.serde:micronaut-serde-processor")
-    implementation("io.micronaut:micronaut-aop")
-    implementation("io.micronaut:micronaut-http-client")
-    implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
-    implementation("io.micronaut.serde:micronaut-serde-jackson")
-    // Views Dependencies
-    implementation("gg.jte:jte-kotlin:${jteVersion}")
-    implementation("gg.jte:jte-runtime:${jteVersion}")
-    implementation("io.micronaut.views:micronaut-views-jte")
-    jteGenerate "gg.jte:jte-models:${jteVersion}"
-
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    compileOnly("org.graalvm.nativeimage:svm")
-    runtimeOnly("ch.qos.logback:logback-classic")
-    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
-}
-
 application {
     mainClass.set("br.ufpe.liber.Application")
 }
@@ -65,13 +51,18 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion(javaVersion)
     toolchain {
-        languageVersion = JavaLanguageVersion.of(javaVersion)
+        languageVersion = JavaLanguageVersion.of(javaVersion as int)
     }
 }
 
 test {
     useJUnitPlatform()
-    finalizedBy(koverVerify)
+    // See https://kotest.io/docs/extensions/system_extensions.html#system-environment
+    jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+}
+
+testSets {
+    accessibilityTest
 }
 
 tasks {
@@ -118,27 +109,17 @@ micronaut {
         incremental(true)
         annotations("br.ufpe.*")
     }
-    aot {
-        // Please review carefully the optimizations enabled below
-        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
-        optimizeServiceLoading = false
-        convertYamlToJava = false
-        precomputeOperations = true
-        cacheEnvironment = true
-        optimizeClassLoading = true
-        deduceEnvironment = true
-        optimizeNetty = true
-    }
 }
 
-
 jte {
-    sourceDirectory = file("src/main/jte").toPath()
-    targetDirectory = file("$buildDir/jte-classes").toPath()
+    sourceDirectory = layout.projectDirectory.dir("src/main/jte").asFile.toPath()
+    targetDirectory = layout.buildDirectory.dir("jte-classes").get().asFile.toPath()
     trimControlStructures = true
     packageName = "br.ufpe.liber"
     generate()
-    jteExtension("gg.jte.models.generator.ModelExtension")
+    jteExtension("gg.jte.models.generator.ModelExtension") {
+        property("language", "Kotlin")
+    }
 }
 
 tasks.configureEach {
@@ -149,7 +130,7 @@ tasks.configureEach {
 
 jar {
     dependsOn precompileJte
-    from fileTree("$buildDir/jte-classes") {
+    from fileTree("${layout.buildDirectory.asFile.get()}/jte-classes") {
         include "**/.*.class"
     }
 }
@@ -160,7 +141,53 @@ testlogger {
     showStackTraces true
 }
 
-//diktat {
-//    diktatConfigFile = file("diktat-analysis.yml")
-//    githubActions = System.getenv("GITHUB_ACTIONS")
-//}
+tasks.register("releaseDate") {
+    doLast {
+        println(
+            ZonedDateTime
+                .now()
+                .format(
+                    DateTimeFormatter
+                        .ofLocalizedDateTime(FormatStyle.MEDIUM)
+                        .withLocale(new Locale("pt-BR"))
+                )
+        )
+    }
+}
+
+dependencies {
+    ksp("io.micronaut.serde:micronaut-serde-processor")
+    implementation("io.micronaut:micronaut-aop")
+    implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
+    implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
+
+    compileOnly("org.graalvm.nativeimage:svm")
+    runtimeOnly("ch.qos.logback:logback-classic")
+    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // Views Dependencies
+    implementation("gg.jte:jte-kotlin:${jteVersion}")
+    implementation("gg.jte:jte-runtime:${jteVersion}")
+    implementation("io.micronaut.views:micronaut-views-jte")
+    jteGenerate "gg.jte:jte-models:${jteVersion}"
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+
+    // If needs to add Serialization (to JSON, for example). Also check the
+    // plugins section.
+    // implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
+    // Netty security overrides
+    implementation("io.netty:netty-handler:4.1.100.Final")
+    implementation("io.netty:netty-codec-http2:4.1.100.Final")
+
+    // Accessibility Tests
+    accessibilityTestImplementation("org.seleniumhq.selenium:selenium-java:4.14.1")
+    accessibilityTestImplementation("com.deque.html.axe-core:selenium:4.8.0")
+
+    // Kotest manual update
+    testImplementation("io.micronaut.test:micronaut-test-kotest5:4.1.0")
+}

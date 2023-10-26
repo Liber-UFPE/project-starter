@@ -2,57 +2,45 @@
 
 package br.ufpe.liber
 
+import gg.jte.ContentType
+import gg.jte.TemplateEngine
+import gg.jte.resolve.DirectoryCodeResolver
 import io.micronaut.context.annotation.Factory
-import io.micronaut.context.event.ApplicationEventListener
-import io.micronaut.context.event.StartupEvent
-import io.micronaut.core.io.ResourceResolver
-import io.micronaut.runtime.Micronaut.run
+import io.micronaut.context.env.Environment
+import io.micronaut.kotlin.runtime.startApplication
 import jakarta.inject.Singleton
-import java.util.*
+import org.slf4j.LoggerFactory
+import java.nio.file.Paths
 
 object Application {
     @JvmStatic
     @Suppress("detekt:SpreadOperator")
     fun main(args: Array<String>) {
-        run(*args)
+        startApplication<Application>(*args) {
+            eagerInitAnnotated(EagerInProduction::class.java)
+        }
     }
 }
 
 @Factory
 internal class TemplatesFactory {
+    private val logger = LoggerFactory.getLogger(TemplatesFactory::class.java)
+
     @Singleton
-    fun createTemplate(): Templates = StaticTemplates()
-}
-
-@Singleton
-class GitPropertiesLoader(private val resourceResolver: ResourceResolver) : ApplicationEventListener<StartupEvent> {
-    override fun onApplicationEvent(event: StartupEvent) {
-        val properties = Properties()
-        resourceResolver.getResourceAsStream("classpath:git.properties").ifPresent {
-            properties.load(it)
+    fun createTemplate(environment: Environment): Templates {
+        return if (canUseStaticTemplates(environment)) {
+            logger.info("Use pre-compiled templates")
+            StaticTemplates()
+        } else {
+            logger.info("Hot reloading jte templates")
+            val codeResolver = DirectoryCodeResolver(Paths.get("src/main/jte"))
+            val templateEngine = TemplateEngine.create(codeResolver, ContentType.Html)
+            DynamicTemplates(templateEngine)
         }
-
-        GitProperties.value = GitProperties(
-            branch = properties.getProperty("git.branch"),
-            commitId = properties.getProperty("git.commit.id"),
-            commitTime = properties.getProperty("git.commit.time"),
-            totalCommitCount = properties.getProperty("git.total.commit.count").toInt(),
-        )
     }
-}
 
-data class GitProperties(
-    val branch: String,
-    val commitId: String,
-    val commitTime: String,
-    val totalCommitCount: Int,
-) {
-    companion object {
-        // DeepSouce flags this as bad practice:
-        // https://app.deepsource.com/directory/analyzers/kotlin/issues/KT-W1047
-        // But this use is intentional since we know Micronaut will initialize it
-        // before usage (considering we have the ApplicationEventListener above).
-        // Therefore, we add a skip to this occurrence.
-        lateinit var value: GitProperties // skipcq: KT-W1047
+    private fun canUseStaticTemplates(environment: Environment): Boolean {
+        return environment.activeNames.contains(Environment.BARE_METAL) ||
+            environment.activeNames.contains(Environment.TEST)
     }
 }
