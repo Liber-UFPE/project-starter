@@ -5,8 +5,9 @@
 
 This is a project starter template. There are a few things you need to do after creating your repository using this template:
 
-- [ ] Replace `project-starter` with your project's name
+- [ ] Replace `project-starter`/`PROJECT_STARTER` (and other mentions) with your project's name
 - [ ] Edit `src/main/resources/public/stylesheets/main.css` as needed (different colors, fonts, etc.)
+- [ ] Edit `src/main/resources/public/javascript/main.js` as needed
 - [ ] Edit `src/main/jte/layout.kte` as necessary to support your project's navigation
 
 ## Adding a new page
@@ -18,24 +19,17 @@ To add a new page, you need to edit a few files:
 Add a new template such as `src/main/jte/my-new-page.kte` that uses the project layout:
 
 ```html
-@template.layout(
-    title = "Page title",
-    content = @`
-        @template.sections.top(
-        title = "Main top section title",
-        subtext = @`
-        Main top section content. It may be just regular <abbr title="HyperText Markup Language">HTML</abbr>.
-        `
-        )
-        @template.sections.main(
-            content = @`
-            <div class="row mb-2">
-                <p>Secondary section HTML</p>
-            </div>
-            `
-        )
-    `
-)
+@template.layout(title = "Page title", content = @`
+    @template.sections.top(title = "Main top section title", subtext = @`
+        <h1>Main top section content</h1>
+        <p>It is <abbr title="HyperText Markup Language">HTML</abbr>.</p>
+    `)
+    @template.sections.main(content = @`
+        <div class="row mb-2">
+            <p>Secondary section HTML</p>
+        </div>
+    `)
+`)
 ```
 
 ### 2. Controller / Route
@@ -82,26 +76,13 @@ If you want to reload the application for every code change, run [Gradle in _con
 ./gradlew run -t
 ```
 
-This won't reload the application when there is a change in the templates, though. To do so, you need to open two terminal windows and run these two commands on each one of them:
-
-```shell
-# Terminal 1:
-# Will compile the templates for every change
-./gradlew generateJte -t
-```
-
-```shell
-# Terminal 2:
-# Will restart the application for every change, including the templates
-./gradlew run -t
-```
-
 ## Requirements
 
 1. Java 17+ (easier to install with [SDKMAN](https://sdkman.io/))
 2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) (if you want to test docker images)
 3. [Ktlint CLI](https://pinterest.github.io/ktlint/1.0.0/install/cli/) (if you want to run code inspections locally)
 4. [Gradle](https://gradle.org/install/#with-a-package-manager) (if you don't want to use the `./gradlew` script)
+5. [chromedriver](https://chromedriver.chromium.org/downloads) (if you want to run browser tests)
 
 ## Technical aspects
 
@@ -119,16 +100,14 @@ The project is developed using Micronaut Framework, [Gradle](https://gradle.org/
 It uses JTE/KTE as the template engine.
 
 - [JTE Website](https://jte.gg/)
-- [JTE Documentation](https://github.com/casid/jte/blob/main/DOCUMENTATION.md)
-- [JTE Tutorial](https://javalin.io/tutorials/jte)
 
 ### CI & CD
 
-The project uses [GitHub Actions](https://docs.github.com/en/actions) to run tests, package a new version, and deploy it to [Fly.io](https://fly.io/) (experimental). A Docker image is build for every merge/push made to `main` branch.
+The project uses [GitHub Actions](https://docs.github.com/en/actions) to run tests, package a new version, and deploy it to [Railway.app](https://railway.app/) (experimental).
 
 ### Tests & Code Coverage
 
-We use [Kotest](https://kotest.io/) as the test framework, and [Kover](https://github.com/Kotlin/kotlinx-kover) as the Code Coverage tool. See also [Micronaut Kotest integration docs].(https://micronaut-projects.github.io/micronaut-test/latest/guide/#kotest5)
+We use [Kotest](https://kotest.io/) as the test framework, and [Kover](https://github.com/Kotlin/kotlinx-kover) as the Code Coverage tool. See also [Micronaut Kotest integration docs](https://micronaut-projects.github.io/micronaut-test/latest/guide/#kotest5).
 
 ### Code Inspections
 
@@ -148,5 +127,6 @@ Project follow the default [Maven Standard Directory Layout](https://maven.apach
 | `src/main/resources`        | Configurations and other resources                   |
 | `src/main/resources/public` | Web assets such as images, javascript, and css files |
 | `src/test`                  | Root folder for test code                            |
+| `src/accessibilityTest`     | Root folder for accessibility test code              |
 | `.github`                   | Root folder for GitHub configurations                |
 | `.github/workflows`         | GitHub Actions configuration                         |
