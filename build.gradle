@@ -185,7 +185,7 @@ dependencies {
     implementation("io.netty:netty-codec-http2:4.1.100.Final")
 
     // Accessibility Tests
-    accessibilityTestImplementation("org.seleniumhq.selenium:selenium-java:4.14.1")
+    accessibilityTestImplementation("org.seleniumhq.selenium:selenium-java:4.15.0")
     accessibilityTestImplementation("com.deque.html.axe-core:selenium:4.8.0")
 
     // Kotest manual update
