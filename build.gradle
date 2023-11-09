@@ -182,7 +182,7 @@ dependencies {
 
     // Netty security overrides
     implementation("io.netty:netty-handler:4.1.100.Final")
-    implementation("io.netty:netty-codec-http2:4.1.100.Final")
+    implementation("io.netty:netty-codec-http2:4.1.101.Final")
 
     // Accessibility Tests
     accessibilityTestImplementation("org.seleniumhq.selenium:selenium-java:4.15.0")
