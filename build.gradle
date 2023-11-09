@@ -181,7 +181,7 @@ dependencies {
     // implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     // Netty security overrides
-    implementation("io.netty:netty-handler:4.1.100.Final")
+    implementation("io.netty:netty-handler:4.1.101.Final")
     implementation("io.netty:netty-codec-http2:4.1.100.Final")
 
     // Accessibility Tests
