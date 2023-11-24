@@ -1,16 +1,19 @@
+import com.adarshr.gradle.testlogger.theme.ThemeType
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "${kotlinVersion}"
-    id("org.jetbrains.kotlin.plugin.allopen") version "${kotlinVersion}"
-    // If needs to add Serialization (to JSON, for example)
-    // id("org.jetbrains.kotlin.plugin.serialization") version "${kotlinVersion}"
-    id("com.google.devtools.ksp") version "${kotlinVersion}-1.0.13"
+    id("org.jetbrains.kotlin.jvm") version "1.9.20"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.20"
+    // If the project needs to add Serialization (to JSON, for example)
+    // id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
+    id("com.google.devtools.ksp") version "1.9.20-1.0.13"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "${micronautVersion}"
-    id("gg.jte.gradle") version "${jteVersion}"
+    id("io.micronaut.application") version "4.2.0"
+    id("gg.jte.gradle") version "3.1.5"
     // Provides better test output
     id("com.adarshr.test-logger") version "4.0.0"
     // Code Coverage:
@@ -18,29 +21,27 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.7.4"
     // Code Inspections
     // https://detekt.dev/
-    id("io.gitlab.arturbosch.detekt") version("1.23.1")
+    id("io.gitlab.arturbosch.detekt") version ("1.23.1")
     // Task graph utility
     // https://github.com/dorongold/gradle-task-tree
     id("com.dorongold.task-tree") version "2.1.1"
     // To generate a git.properties file containing git repository metadata
-    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id("com.gorylenko.gradle-git-properties") version "2.4.1"
     // Easily add new test sets
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
-ext {
-    javaVersion = 17
-    dockerImage = "ghcr.io/liber-ufpe/project-starter"
-}
+val javaVersion: Int = 17
+val dockerImage: String = "ghcr.io/liber-ufpe/project-starter"
+
+val kotlinVersion: String = project.properties["kotlinVersion"] as String
+val micronautVersion: String = project.properties["micronautVersion"] as String
+val jteVersion: String = project.properties["jteVersion"] as String
 
 version = "0.1"
 group = "br.ufpe.liber"
 
 repositories {
-    maven {
-        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-        mavenContent { snapshotsOnly() }
-    }
     mavenCentral()
 }
 
@@ -51,53 +52,40 @@ application {
 java {
     sourceCompatibility = JavaVersion.toVersion(javaVersion)
     toolchain {
-        languageVersion = JavaLanguageVersion.of(javaVersion as int)
+        languageVersion = JavaLanguageVersion.of(javaVersion)
     }
 }
 
-test {
+tasks.named("test", Test::class) {
     useJUnitPlatform()
     // See https://kotest.io/docs/extensions/system_extensions.html#system-environment
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
 }
 
 testSets {
-    accessibilityTest
+    create("accessibilityTest")
 }
 
-tasks {
-    dockerBuild {
-        images = ["${dockerImage}:latest", "${dockerImage}:${project.version}", "${project.name}:latest", "${project.name}:${version}"]
-    }
+val accessibilityTestImplementation: Configuration = configurations["accessibilityTestImplementation"]
 
-    dockerBuildNative {
-        images = ["${dockerImage}:latest", "${dockerImage}:${project.version}", "${project.name}:latest", "${project.name}:${version}"]
-    }
-}
-
-tasks.named("dockerfile") {
-    // The default `openjdk` images are deprecated and not maintained.  Eclise Temurim
-    // images are recommended instead:
-    // https://hub.docker.com/_/eclipse-temurin
-    baseImage = "eclipse-temurin:${javaVersion}-jdk-alpine"
-}
-
-tasks.named('dockerfileNative') {
-    // Graal base images are now published here: https://github.com/graalvm/container
-    // The `native-image-community` image is a size compact GraalVM Community Edition
-    // container image with the Native Image support.	.
-    graalImage = "ghcr.io/graalvm/native-image-community:${javaVersion}"
+tasks.withType<DockerBuildImage>() {
+    images.addAll(
+        "${dockerImage}:latest",
+        "${dockerImage}:${project.version}",
+        "${project.name}:latest",
+        "${project.name}:${version}"
+    )
 }
 
 graalvmNative {
-    toolchainDetection = false
+    toolchainDetection.set(false)
     binaries {
-        main {
-            buildArgs.add('--verbose')
+        named("main") {
+            buildArgs.add("--verbose")
             // 7GB is what is available when using Github-hosted runners:
             // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-            buildArgs.add('-J-Xmx7G')
-            buildArgs.add('--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons')
+            buildArgs.add("-J-Xmx7G")
+            buildArgs.add("--initialize-at-build-time=kotlin.coroutines.intrinsics.CoroutineSingletons")
         }
     }
 }
@@ -123,22 +111,22 @@ jte {
 }
 
 tasks.configureEach {
-    if (["kspKotlin", "inspectRuntimeClasspath"].contains(name)) {
-        dependsOn "generateJte"
+    if (listOf("kspKotlin", "inspectRuntimeClasspath").contains(name)) {
+        mustRunAfter("generateJte")
     }
 }
 
-jar {
-    dependsOn precompileJte
-    from fileTree("${layout.buildDirectory.asFile.get()}/jte-classes") {
-        include "**/.*.class"
+tasks.named("jar", Jar::class) {
+    dependsOn.add("precompileJte")
+    from(fileTree(layout.buildDirectory.file("jte-classes").get().asFile.absolutePath)) {
+        include("**/.*.class")
     }
 }
 
 testlogger {
-    theme 'mocha'
-    showExceptions true
-    showStackTraces true
+    theme = ThemeType.MOCHA
+    showExceptions = true
+    showStackTraces = true
 }
 
 tasks.register("releaseDate") {
@@ -149,7 +137,7 @@ tasks.register("releaseDate") {
                 .format(
                     DateTimeFormatter
                         .ofLocalizedDateTime(FormatStyle.MEDIUM)
-                        .withLocale(new Locale("pt-BR"))
+                        .withLocale(Locale("pt-BR"))
                 )
         )
     }
@@ -171,12 +159,13 @@ dependencies {
     implementation("gg.jte:jte-kotlin:${jteVersion}")
     implementation("gg.jte:jte-runtime:${jteVersion}")
     implementation("io.micronaut.views:micronaut-views-jte")
-    jteGenerate "gg.jte:jte-models:${jteVersion}"
+    jteGenerate("gg.jte:jte-models:${jteVersion}")
+    jteGenerate("gg.jte:jte-native-resources:$jteVersion")
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
 
-    // If needs to add Serialization (to JSON, for example). Also check the
+    // If the project needs to add Serialization (to JSON, for example). Also check the
     // plugins section.
     // implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
