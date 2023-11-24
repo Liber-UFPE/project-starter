@@ -23,15 +23,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
       - name: Starts Gradle Daemon
         run: ./gradlew
-      # Manually execute the task graph to measure time
-      - run: ./gradlew generateJte
-      - run: ./gradlew kspKotlin
-      - run: ./gradlew processResources
-      - run: ./gradlew compileKotlin
-      - run: ./gradlew compileJava
-      - run: ./gradlew classes
-      - run: ./gradlew kspTestKotlin
-      - run: ./gradlew compileTestKotlin
+      - run: ./gradlew testClasses
 
   detekt:
     name: Code Analysis / detekt
@@ -72,20 +64,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Liber-UFPE/spring-gradle-build-action@v2
-      # Manually execute the task graph to measure time
-      - run: ./gradlew generateJte
-      - run: ./gradlew kspKotlin
-      - run: ./gradlew processResources
-      - run: ./gradlew compileKotlin
-      - run: ./gradlew compileJava
-      - run: ./gradlew classes
-      - run: ./gradlew kspTestKotlin
-      - run: ./gradlew compileTestKotlin
-      - run: ./gradlew testClasses
-      - run: ./gradlew kspAccessibilityTestKotlin
-      - run: ./gradlew processAccessibilityTestResources
-      - run: ./gradlew compileAccessibilityTestKotlin
-      - run: ./gradlew compileAccessibilityTestJava
       - run: ./gradlew accessibilityTestClasses
       - name: Run Accessibility Tests
         # For some annoying reason, Gradle insists in execute the `test` task
@@ -101,18 +79,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Liber-UFPE/spring-gradle-build-action@v2
-      # Manually execute the task graph to measure time
-      - run: ./gradlew generateJte
-      - run: ./gradlew kspKotlin
-      - run: ./gradlew processResources
-      - run: ./gradlew compileKotlin
-      - run: ./gradlew compileJava
-      - run: ./gradlew classes
-      - run: ./gradlew kspTestKotlin
-      - run: ./gradlew compileTestKotlin
-      - run: ./gradlew testClasses
-      - run: ./gradlew test
-      - run: ./gradlew koverHtmlReport
+      - run: ./gradlew koverHtmlReport -x accessibilityTest
       - name: Setup Pandoc
         uses: r-lib/actions/setup-pandoc@v2
       - name: Output Kover summary
@@ -139,13 +106,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Liber-UFPE/spring-gradle-build-action@v2
-      # Manually execute the task graph to measure time
-      - run: ./gradlew generateJte
-      - run: ./gradlew kspKotlin
-      - run: ./gradlew processResources
-      - run: ./gradlew compileKotlin
-      - run: ./gradlew compileJava
-      - run: ./gradlew classes
       - run: ./gradlew shadowJar
 
   build-docker:
