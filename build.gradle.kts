@@ -68,12 +68,12 @@ testSets {
 
 val accessibilityTestImplementation: Configuration = configurations["accessibilityTestImplementation"]
 
-tasks.withType<DockerBuildImage>() {
+tasks.withType<DockerBuildImage> {
     images.addAll(
-        "${dockerImage}:latest",
-        "${dockerImage}:${project.version}",
+        "$dockerImage:latest",
+        "$dockerImage:${project.version}",
         "${project.name}:latest",
-        "${project.name}:${version}"
+        "${project.name}:$version",
     )
 }
 
@@ -137,8 +137,8 @@ tasks.register("releaseDate") {
                 .format(
                     DateTimeFormatter
                         .ofLocalizedDateTime(FormatStyle.MEDIUM)
-                        .withLocale(Locale("pt-BR"))
-                )
+                        .withLocale(Locale("pt-BR")),
+                ),
         )
     }
 }
@@ -156,14 +156,14 @@ dependencies {
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 
     // Views Dependencies
-    implementation("gg.jte:jte-kotlin:${jteVersion}")
-    implementation("gg.jte:jte-runtime:${jteVersion}")
+    implementation("gg.jte:jte-kotlin:$jteVersion")
+    implementation("gg.jte:jte-runtime:$jteVersion")
     implementation("io.micronaut.views:micronaut-views-jte")
-    jteGenerate("gg.jte:jte-models:${jteVersion}")
+    jteGenerate("gg.jte:jte-models:$jteVersion")
     jteGenerate("gg.jte:jte-native-resources:$jteVersion")
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
 
     // If the project needs to add Serialization (to JSON, for example). Also check the
     // plugins section.
