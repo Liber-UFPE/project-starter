@@ -121,6 +121,9 @@ graalvmNative {
                 // due to the lack of output (since native-image creation can
                 // take a long time to complete).
                 jvmArgs.add("-Xlog:gc*")
+                // 7GB is what is available when using Github-hosted runners:
+                // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
+                buildArgs.add("-J-Xmx7G")
             }
 
             // Do a quick/un-optimized build. The intention is to validate
