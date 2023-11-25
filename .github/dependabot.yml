@@ -10,14 +10,15 @@ updates:
     rebase-strategy: auto
     schedule:
       interval: "daily"
-      day: "sunday"
     commit-message:
       prefix: "[gradle]"
+    groups:
+      gradle-patch-updates:
+        update-types: [ "patch" ]
   - package-ecosystem: "github-actions"
     directory: "/"
     rebase-strategy: auto
     schedule:
       interval: "weekly"
-      day: "sunday"
     commit-message:
       prefix: "[github-actions]"

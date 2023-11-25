@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 env:
-  GRADLE_OPTS: "-Dorg.gradle.console=plain"
+  GRADLE_OPTS: "-Dorg.gradle.console=plain -Dorg.gradle.caching=true -Dkotlin.caching.enabled=true"
 
 jobs:
   gh-dependency-graph:
@@ -26,4 +26,6 @@ jobs:
         with:
           dependency-graph: generate-and-submit
       - name: Generate Dependency Graph
-        run: ./gradlew compileTestKotlin
+        run: ./gradlew testClasses
+      - name: Gradle Tasks Summary
+        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
