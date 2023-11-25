@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD013 -->
+
 # Project Starter
 
 ![CI Workflow](https://github.com/Liber-UFPE/project-starter/actions/workflows/build.yml/badge.svg?branch=main)
@@ -5,7 +7,7 @@
 
 This is a project starter template. There are a few things you need to do after creating your repository using this template:
 
-- [ ] Replace `project-starter`/`PROJECT_STARTER` (and other mentions) with your project's name
+- [ ] Replace `project-starter`, `PROJECT_STARTER` (and other mentions) with your project's name
 - [ ] Edit `src/main/resources/public/stylesheets/main.css` as needed (different colors, fonts, etc.)
 - [ ] Edit `src/main/resources/public/javascript/main.js` as needed
 - [ ] Edit `src/main/jte/layout.kte` as necessary to support your project's navigation
@@ -78,7 +80,7 @@ If you want to reload the application for every code change, run [Gradle in _con
 
 ## Requirements
 
-1. Java 17+ (easier to install with [SDKMAN](https://sdkman.io/))
+1. Java 21 (easier to install with [SDKMAN](https://sdkman.io/))
 2. [Docker Desktop](https://www.docker.com/products/docker-desktop/) (if you want to test docker images)
 3. [Ktlint CLI](https://pinterest.github.io/ktlint/1.0.0/install/cli/) (if you want to run code inspections locally)
 4. [Gradle](https://gradle.org/install/#with-a-package-manager) (if you don't want to use the `./gradlew` script)
@@ -100,6 +102,7 @@ The project is developed using Micronaut Framework, [Gradle](https://gradle.org/
 It uses JTE/KTE as the template engine.
 
 - [JTE Website](https://jte.gg/)
+- [Micronaut JTE Views documentation](https://micronaut-projects.github.io/micronaut-views/latest/guide/#jte)
 
 ### CI & CD
 
@@ -111,7 +114,7 @@ We use [Kotest](https://kotest.io/) as the test framework, and [Kover](https://g
 
 ### Code Inspections
 
-For every merge/push, and also for pull requests, there are GitHub Actions to run [ktlint](https://github.com/pinterest/ktlint) and [detekt](https://github.com/detekt/detekt). There is also an (experimental) integration with [DeepSource](https://deepsource.com/). 
+For every merge/push, and also for pull requests, there are GitHub Actions to run [ktlint](https://github.com/pinterest/ktlint) and [detekt](https://github.com/detekt/detekt). There is also an (experimental) integration with [DeepSource](https://deepsource.com/).
 
 Ktlint is configured to use `intellij_idea` code style so that it won't conflict with code formatting action in IDEA.
 
@@ -130,3 +133,34 @@ Project follow the default [Maven Standard Directory Layout](https://maven.apach
 | `src/accessibilityTest`     | Root folder for accessibility test code              |
 | `.github`                   | Root folder for GitHub configurations                |
 | `.github/workflows`         | GitHub Actions configuration                         |
+
+## Micronaut 4.2.0 Documentation
+
+- [User Guide](https://docs.micronaut.io/4.2.0/guide/index.html)
+- [API Reference](https://docs.micronaut.io/4.2.0/api/index.html)
+- [Configuration Reference](https://docs.micronaut.io/4.2.0/guide/configurationreference.html)
+- [Micronaut Guides](https://guides.micronaut.io/index.html)
+
+---
+
+- [Shadow Gradle Plugin](https://plugins.gradle.org/plugin/com.github.johnrengelman.shadow)
+- [Micronaut Gradle Plugin documentation](https://micronaut-projects.github.io/micronaut-gradle-plugin/latest/)
+- [GraalVM Gradle Plugin documentation](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)
+
+## Feature serialization-jackson documentation
+
+- [Micronaut Serialization Jackson Core documentation](https://micronaut-projects.github.io/micronaut-serialization/latest/guide/)
+
+## Feature ksp documentation
+
+- [Micronaut Kotlin Symbol Processing (KSP) documentation](https://docs.micronaut.io/latest/guide/#kotlin)
+- [https://kotlinlang.org/docs/ksp-overview.html](https://kotlinlang.org/docs/ksp-overview.html)
+
+## Feature kotest documentation
+
+- [Micronaut Test Kotest5 documentation](https://micronaut-projects.github.io/micronaut-test/latest/guide/#kotest5)
+- [https://kotest.io/](https://kotest.io/)
+
+## Feature micronaut-aot documentation
+
+- [Micronaut AOT documentation](https://micronaut-projects.github.io/micronaut-aot/latest/guide/)

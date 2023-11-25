@@ -1,5 +1,3 @@
-@file:Suppress("FILE_NAME_MATCH_CLASS")
-
 package br.ufpe.liber
 
 import gg.jte.ContentType
