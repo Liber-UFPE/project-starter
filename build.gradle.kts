@@ -213,4 +213,8 @@ dependencies {
     jteGenerate("gg.jte:jte-native-resources:$jteVersion")
     implementation("gg.jte:jte:$jteVersion")
     implementation("gg.jte:jte-kotlin:$jteVersion")
+
+    // Accessibility Tests
+    accessibilityTestImplementation("org.seleniumhq.selenium:selenium-java:4.15.0")
+    accessibilityTestImplementation("com.deque.html.axe-core:selenium:4.8.0")
 }
