@@ -82,12 +82,20 @@ testSets {
 
 val accessibilityTestImplementation: Configuration = configurations["accessibilityTestImplementation"]
 
-tasks.withType<DockerBuildImage> {
+tasks.named<DockerBuildImage>("dockerBuild") {
     images.addAll(
         "$dockerImage:latest",
         "$dockerImage:${project.version}",
         "${project.name}:latest",
         "${project.name}:$version",
+    )
+}
+tasks.named<DockerBuildImage>("dockerBuildNative") {
+    images.addAll(
+        "$dockerImage-native:latest",
+        "$dockerImage-native:${project.version}",
+        "${project.name}-native:latest",
+        "${project.name}-native:$version",
     )
 }
 tasks.withType<MicronautDockerfile> {
