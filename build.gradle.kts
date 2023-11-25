@@ -65,7 +65,7 @@ java {
     sourceCompatibility = JavaVersion.toVersion(javaVersion)
 }
 
-tasks.named("test", Test::class) {
+tasks.named<Test>("test") {
     useJUnitPlatform()
     // See https://kotest.io/docs/extensions/system_extensions.html#system-environment
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
@@ -147,7 +147,7 @@ tasks.configureEach {
         mustRunAfter("generateJte")
     }
 }
-tasks.named("jar", Jar::class) {
+tasks.named<Jar>("jar") {
     dependsOn.add("precompileJte")
     from(fileTree(layout.buildDirectory.file("jte-classes").get().asFile.absolutePath)) {
         include("**/.*.class")
@@ -168,7 +168,7 @@ buildTimeTracker {
             withTableLabels = true,
             sorted = true,
             take = Int.MAX_VALUE,
-        )
+        ),
     )
 }
 
@@ -181,17 +181,17 @@ tasks.register("releaseDate") {
                 .format(
                     DateTimeFormatter
                         .ofLocalizedDateTime(FormatStyle.MEDIUM)
-                        .withLocale(Locale.Builder().setLanguage("pt-BR").build())
-                )
+                        .withLocale(Locale.Builder().setLanguage("pt-BR").build()),
+                ),
         )
     }
 }
 
 // Install pre-commit git hooks to run ktlint and detekt
-tasks.register("installGitHooks", Copy::class) {
+// https://docs.gradle.org/current/userguide/working_with_files.html#sec:copying_single_file_example
+tasks.register<Copy>("installGitHooks") {
     from(layout.projectDirectory.file("scripts/pre-commit"))
-    into(layout.projectDirectory.dir(".git/hooks"))
-    fileMode = 755
+    into(layout.projectDirectory.dir(".git/hooks/"))
 }
 
 dependencies {
