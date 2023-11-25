@@ -1,6 +1,9 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
+import io.micronaut.gradle.docker.MicronautDockerfile
+import io.micronaut.gradle.docker.NativeImageDockerfile
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -62,7 +65,9 @@ application {
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion(javaVersion)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(javaVersion)
+    }
 }
 
 tasks.named<Test>("test") {
@@ -84,6 +89,15 @@ tasks.withType<DockerBuildImage> {
         "${project.name}:latest",
         "${project.name}:$version",
     )
+}
+tasks.withType<MicronautDockerfile> {
+    baseImage.set("amazoncorretto:$javaVersion")
+    instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
+}
+tasks.withType<NativeImageDockerfile> {
+    jdkVersion.set(javaVersion.toString())
+    baseImage.set("amazonlinux:2023")
+    instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
 }
 
 // See https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
