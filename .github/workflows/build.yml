@@ -123,7 +123,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'graalvm'
-          cache: 'maven'
+          cache: 'gradle'
       - name: Run dockerBuildNative
         run: GRAALVM_QUICK_BUILD=true ./gradlew dockerBuildNative
       - name: Gradle Tasks Summary
