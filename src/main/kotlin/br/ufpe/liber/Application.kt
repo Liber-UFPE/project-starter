@@ -15,6 +15,8 @@ object Application {
     @Suppress("detekt:SpreadOperator")
     fun main(args: Array<String>) {
         startApplication<Application>(*args) {
+            // Fallback to dev environment if none is specified.
+            environments(System.getenv().getOrDefault("MICRONAUT_ENVIRONMENTS", Environment.DEVELOPMENT))
             eagerInitAnnotated(EagerInProduction::class.java)
         }
     }
@@ -26,19 +28,16 @@ internal class TemplatesFactory {
 
     @Singleton
     fun createTemplate(environment: Environment): Templates {
-        return if (canUseStaticTemplates(environment)) {
-            logger.info("Use pre-compiled templates")
-            StaticTemplates()
-        } else {
+        return if (devEnvironment(environment)) {
             logger.info("Hot reloading jte templates")
             val codeResolver = DirectoryCodeResolver(Paths.get("src/main/jte"))
             val templateEngine = TemplateEngine.create(codeResolver, ContentType.Html)
             DynamicTemplates(templateEngine)
+        } else {
+            logger.info("Use pre-compiled templates")
+            StaticTemplates()
         }
     }
 
-    private fun canUseStaticTemplates(environment: Environment): Boolean {
-        return environment.activeNames.contains(Environment.BARE_METAL) ||
-            environment.activeNames.contains(Environment.TEST)
-    }
+    private fun devEnvironment(env: Environment): Boolean = env.activeNames.contains(Environment.DEVELOPMENT)
 }
