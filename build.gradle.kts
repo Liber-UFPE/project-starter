@@ -107,6 +107,11 @@ tasks.withType<NativeImageDockerfile> {
     baseImage.set("amazonlinux:2023")
     instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
 }
+tasks.register("dockerImageName") {
+    doFirst {
+        println(tasks.named<DockerBuildImage>("dockerBuild").get().images.get().last())
+    }
+}
 
 // See https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
 graalvmNative {

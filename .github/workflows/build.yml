@@ -114,10 +114,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-#      - uses: docker/scout-action@v1
-#        with:
-#          command: quickview
-#          image: image
+      - name: Docker Image name
+        id: dockerImageName
+        run: echo "dockerImageName=$(gradle -q dockerImageName)" >> "$GITHUB_OUTPUT"
+      - uses: docker/scout-action@v1
+        with:
+          command: quickview
+          image: ${{ steps.dockerImageName.outputs.dockerImageName }}
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 
