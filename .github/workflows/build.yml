@@ -121,6 +121,8 @@ jobs:
         with:
           command: quickview
           image: ${{ steps.dockerImageName.outputs.dockerImageName }}
+          write-comment: false
+          summary: true
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 
@@ -139,6 +141,21 @@ jobs:
           cache: 'gradle'
       - name: Run dockerBuildNative
         run: GRAALVM_QUICK_BUILD=true ./gradlew dockerBuildNative
+      - name: List Docker images
+        run: docker images
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker Image name
+        id: dockerImageNameNative
+        run: echo "dockerImageNameNative=$(gradle -q dockerImageNameNative)" >> "$GITHUB_OUTPUT"
+      - uses: docker/scout-action@v1
+        with:
+          command: quickview
+          image: ${{ steps.dockerImageName.outputs.dockerImageNameNative }}
+          write-comment: false
+          summary: true
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 

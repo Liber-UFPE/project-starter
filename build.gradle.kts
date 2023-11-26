@@ -112,6 +112,11 @@ tasks.register("dockerImageName") {
         println(tasks.named<DockerBuildImage>("dockerBuild").get().images.get().last())
     }
 }
+tasks.register("dockerImageNameNative") {
+    doFirst {
+        println(tasks.named<DockerBuildImage>("dockerBuildNative").get().images.get().last())
+    }
+}
 
 // See https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
 graalvmNative {
