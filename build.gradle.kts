@@ -231,18 +231,20 @@ tasks.register<Copy>("installGitHooks") {
 }
 
 dependencies {
-    ksp("io.micronaut:micronaut-http-validation")
-    ksp("io.micronaut.serde:micronaut-serde-processor")
-    implementation("io.micronaut.kotlin:micronaut-kotlin-extension-functions")
-    implementation("io.micronaut.kotlin:micronaut-kotlin-runtime")
-    implementation("io.micronaut.serde:micronaut-serde-jackson")
-    implementation("io.micronaut.views:micronaut-views-jte")
+    ksp(mn.micronaut.http.validation)
+    ksp(mn.micronaut.serde.processor)
+    implementation(mn.micronaut.kotlin.extension.functions)
+    implementation(mn.micronaut.kotlin.runtime)
+    implementation(mn.micronaut.serde.jackson)
+    implementation(mn.micronaut.views.jte)
+    compileOnly(mn.micronaut.http.client)
+    testImplementation(mn.micronaut.http.client)
+
+    runtimeOnly(mn.logback.classic)
+    runtimeOnly(mn.jackson.module.kotlin)
+
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
-    compileOnly("io.micronaut:micronaut-http-client")
-    runtimeOnly("ch.qos.logback:logback-classic")
-    runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
-    testImplementation("io.micronaut:micronaut-http-client")
 
     // jte dependencies
     jteGenerate("gg.jte:jte-models:$jteVersion")
