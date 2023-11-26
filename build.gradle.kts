@@ -48,6 +48,7 @@ val releasing: Boolean = System.getenv().getOrDefault("RELEASING", "false").toBo
 
 val javaVersion: Int = 21
 val dockerImage: String = "ghcr.io/liber-ufpe/project-starter"
+val dockerImageNative: String = "ghcr.io/liber-ufpe/project-starter-native"
 
 val kotlinVersion: String = project.properties["kotlinVersion"] as String
 val micronautVersion: String = project.properties["micronautVersion"] as String
@@ -86,16 +87,12 @@ tasks.named<DockerBuildImage>("dockerBuild") {
     images.addAll(
         "$dockerImage:latest",
         "$dockerImage:${project.version}",
-        "${project.name}:latest",
-        "${project.name}:$version",
     )
 }
 tasks.named<DockerBuildImage>("dockerBuildNative") {
     images.addAll(
-        "$dockerImage-native:latest",
-        "$dockerImage-native:${project.version}",
-        "${project.name}-native:latest",
-        "${project.name}-native:$version",
+        "$dockerImageNative:latest",
+        "$dockerImageNative:${project.version}",
     )
 }
 tasks.withType<MicronautDockerfile> {
@@ -104,8 +101,8 @@ tasks.withType<MicronautDockerfile> {
 }
 tasks.withType<NativeImageDockerfile> {
     graalImage.set("container-registry.oracle.com/graalvm/native-image:$javaVersion")
-    baseImage.set("amazonlinux:2023")
-    instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
+    baseImage("gcr.io/distroless/cc-debian12")
+    environmentVariable("MICRONAUT_ENVIRONMENTS", "docker")
 }
 tasks.register("dockerImageName") {
     doFirst {
