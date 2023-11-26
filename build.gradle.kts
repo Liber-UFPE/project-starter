@@ -11,7 +11,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.20"
+    kotlin("jvm") version "1.9.20"
     id("org.jetbrains.kotlin.plugin.allopen") version "1.9.20"
     id("com.google.devtools.ksp") version "1.9.20-1.0.14"
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -240,8 +240,8 @@ dependencies {
     runtimeOnly(mn.logback.classic)
     runtimeOnly(mn.jackson.module.kotlin)
 
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion")
+    implementation(kotlin("reflect", kotlinVersion))
+    implementation(kotlin("stdlib-jdk8", kotlinVersion))
 
     // jte dependencies
     jteGenerate("gg.jte:jte-models:$jteVersion")
