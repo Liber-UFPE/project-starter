@@ -1,6 +1,5 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
 import io.micronaut.gradle.docker.MicronautDockerfile
 import io.micronaut.gradle.docker.NativeImageDockerfile
@@ -80,24 +79,17 @@ tasks.named<Test>("test") {
 testSets {
     create("accessibilityTest")
 }
-
 val accessibilityTestImplementation: Configuration = configurations["accessibilityTestImplementation"]
 
 tasks.named<DockerBuildImage>("dockerBuild") {
-    images.addAll(
-        "$dockerImage:latest",
-        "$dockerImage:${project.version}",
-    )
+    images.addAll("$dockerImage:latest", "$dockerImage:${project.version}")
 }
 tasks.named<DockerBuildImage>("dockerBuildNative") {
-    images.addAll(
-        "$dockerImageNative:latest",
-        "$dockerImageNative:${project.version}",
-    )
+    images.addAll("$dockerImageNative:latest", "$dockerImageNative:${project.version}")
 }
 tasks.withType<MicronautDockerfile> {
     baseImage.set("amazoncorretto:$javaVersion")
-    instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
+    environmentVariable("MICRONAUT_ENVIRONMENTS", "docker")
 }
 tasks.withType<NativeImageDockerfile> {
     graalImage.set("container-registry.oracle.com/graalvm/native-image:$javaVersion")
@@ -106,12 +98,12 @@ tasks.withType<NativeImageDockerfile> {
 }
 tasks.register("dockerImageName") {
     doFirst {
-        println(tasks.named<DockerBuildImage>("dockerBuild").get().images.get().last())
+        println(dockerImage)
     }
 }
 tasks.register("dockerImageNameNative") {
     doFirst {
-        println(tasks.named<DockerBuildImage>("dockerBuildNative").get().images.get().last())
+        println(dockerImageNative)
     }
 }
 
@@ -133,7 +125,6 @@ graalvmNative {
                 // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
                 buildArgs.add("-J-Xmx7G")
             }
-
             // Do a quick/un-optimized build. The intention is to validate
             // if it is possible to create a native-image. But, if it is running
             // a `release` job, then it must create an optimized image, hence
@@ -148,7 +139,7 @@ micronaut {
     testRuntime("kotest5")
     processing {
         incremental(true)
-        annotations("br.ufpe.liber.*")
+        annotations("$group.*")
     }
     aot {
         // Please review carefully the optimizations enabled below
@@ -167,7 +158,7 @@ jte {
     sourceDirectory.set(file("src/main/jte").toPath())
     targetDirectory.set(layout.buildDirectory.dir("jte-classes").get().asFile.toPath())
     trimControlStructures.set(true)
-    packageName.set(project.group.toString())
+    packageName.set(group.toString())
     generate()
     jteExtension("gg.jte.nativeimage.NativeResourcesExtension")
     jteExtension("gg.jte.models.generator.ModelExtension") {
