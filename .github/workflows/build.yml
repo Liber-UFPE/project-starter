@@ -108,6 +108,8 @@ jobs:
         uses: ./.github/gradle-action
       - name: Run dockerBuild
         run: gradle dockerBuild
+      - name: Gradle Tasks Summary
+        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
       - name: List Docker images
         run: docker images
       - uses: docker/login-action@v3
@@ -123,8 +125,6 @@ jobs:
           image: ${{ steps.dockerImageName.outputs.dockerImageName }}
           write-comment: false
           summary: true
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 
   build-docker-native:
     name: Package / Docker / native
@@ -141,6 +141,8 @@ jobs:
           cache: 'gradle'
       - name: Run dockerBuildNative
         run: GRAALVM_QUICK_BUILD=true ./gradlew dockerBuildNative
+      - name: Gradle Tasks Summary
+        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
       - name: List Docker images
         run: docker images
       - uses: docker/login-action@v3
@@ -156,8 +158,6 @@ jobs:
           image: ${{ steps.dockerImageName.outputs.dockerImageNameNative }}
           write-comment: false
           summary: true
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 
   check-if-prod:
     if: ${{ github.ref == 'refs/heads/main' }}
