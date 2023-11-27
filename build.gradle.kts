@@ -8,6 +8,8 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
+import java.util.Optional
+import kotlin.jvm.optionals.getOrElse
 
 plugins {
     kotlin("jvm") version "1.9.20"
@@ -43,11 +45,8 @@ plugins {
 }
 
 val ci: Boolean = System.getenv().getOrDefault("CI", "false").toBoolean()
-val releasing: Boolean = System.getenv().getOrDefault("RELEASING", "false").toBoolean()
 
 val javaVersion: Int = 21
-val dockerImage: String = "ghcr.io/liber-ufpe/project-starter"
-val dockerImageNative: String = "ghcr.io/liber-ufpe/project-starter-native"
 
 val kotlinVersion: String = project.properties["kotlinVersion"] as String
 val micronautVersion: String = project.properties["micronautVersion"] as String
@@ -81,12 +80,17 @@ testSets {
 }
 val accessibilityTestImplementation: Configuration = configurations["accessibilityTestImplementation"]
 
-tasks.named<DockerBuildImage>("dockerBuild") {
-    images.addAll("$dockerImage:latest", "$dockerImage:${project.version}")
+fun imageNames(): List<String> {
+    return Optional.ofNullable(System.getenv("REGISTRY"))
+        .flatMap { registry ->
+            Optional.ofNullable(System.getenv("IMAGE_NAME")).map { imageName -> "$registry/$imageName" }
+        }
+        .map { imageTag -> listOf("$imageTag:latest", "$imageTag:$version") }
+        .getOrElse { emptyList() }
 }
-tasks.named<DockerBuildImage>("dockerBuildNative") {
-    images.addAll("$dockerImageNative:latest", "$dockerImageNative:${project.version}")
-}
+
+tasks.named<DockerBuildImage>("dockerBuild") { images.addAll(imageNames()) }
+tasks.named<DockerBuildImage>("dockerBuildNative") { images.addAll(imageNames()) }
 tasks.withType<MicronautDockerfile> {
     baseImage.set("amazoncorretto:$javaVersion")
     environmentVariable("MICRONAUT_ENVIRONMENTS", "docker")
@@ -96,14 +100,15 @@ tasks.withType<NativeImageDockerfile> {
     baseImage("gcr.io/distroless/cc-debian12")
     environmentVariable("MICRONAUT_ENVIRONMENTS", "docker")
 }
-tasks.register("dockerImageName") {
-    doFirst {
-        println(dockerImage)
-    }
-}
 tasks.register("dockerImageNameNative") {
     doFirst {
-        println(dockerImageNative)
+        val images = tasks.named<DockerBuildImage>("dockerBuildNative").get().images.get()
+        val maybeRegistry = Optional.ofNullable(System.getenv("REGISTRY"))
+        if (maybeRegistry.isPresent) {
+            println(images.find { it.contains(maybeRegistry.get()) })
+        } else {
+            println(images.first())
+        }
     }
 }
 
@@ -120,16 +125,11 @@ graalvmNative {
                 // A little extra verbose on CI to prevent jobs being killed
                 // due to the lack of output (since native-image creation can
                 // take a long time to complete).
-                jvmArgs.add("-Xlog:gc*")
+                jvmArgs.add("-Xlog:gc")
                 // 7GB is what is available when using Github-hosted runners:
                 // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-                buildArgs.add("-J-Xmx7G")
+                buildArgs.addAll("-J-Xmx7G", "-XX:MaxRAMPercentage=100")
             }
-            // Do a quick/un-optimized build. The intention is to validate
-            // if it is possible to create a native-image. But, if it is running
-            // a `release` job, then it must create an optimized image, hence
-            // quickBuild must be false.
-            quickBuild.set(ci && !releasing)
         }
     }
 }
