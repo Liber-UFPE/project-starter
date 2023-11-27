@@ -3,6 +3,7 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
 import io.micronaut.gradle.docker.MicronautDockerfile
 import io.micronaut.gradle.docker.NativeImageDockerfile
+import java.lang.System.getenv
 import java.time.Duration
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -44,7 +45,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.50.0"
 }
 
-val ci: Boolean = System.getenv().getOrDefault("CI", "false").toBoolean()
+val ci: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
 
 val javaVersion: Int = 21
 
@@ -80,11 +81,11 @@ testSets {
 }
 val accessibilityTestImplementation: Configuration = configurations["accessibilityTestImplementation"]
 
+fun registry(): Optional<String> = Optional.ofNullable(getenv("REGISTRY")).map { it.lowercase() }
+fun imageName(): Optional<String> = Optional.ofNullable(getenv("IMAGE_NAME")).map { it.lowercase() }
 fun imageNames(): List<String> {
-    return Optional.ofNullable(System.getenv("REGISTRY"))
-        .flatMap { registry ->
-            Optional.ofNullable(System.getenv("IMAGE_NAME")).map { imageName -> "$registry/$imageName" }
-        }
+    return registry()
+        .flatMap { registry -> imageName().map { name -> "$registry/$name".lowercase() } }
         .map { imageTag -> listOf("$imageTag:latest", "$imageTag:$version") }
         .getOrElse { emptyList() }
 }
@@ -103,7 +104,7 @@ tasks.withType<NativeImageDockerfile> {
 tasks.register("dockerImageNameNative") {
     doFirst {
         val images = tasks.named<DockerBuildImage>("dockerBuildNative").get().images.get()
-        val maybeRegistry = Optional.ofNullable(System.getenv("REGISTRY"))
+        val maybeRegistry = registry()
         if (maybeRegistry.isPresent) {
             println(images.find { it.contains(maybeRegistry.get()) })
         } else {
