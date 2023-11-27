@@ -22,10 +22,11 @@ function runDetekt {
 }
 
 runKtlint
+KTLINT_STATUS=$?
+
 runDetekt
+DETEKT_STATUS=$?
 
-STATUS=$?
-
-[ $STATUS -ne 0 ] && exit 1
+[ $KTLINT_STATUS -ne 0 ] || [ $DETEKT_STATUS -ne 0 ] && exit 1
 
 exit 0
