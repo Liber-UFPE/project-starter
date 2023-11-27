@@ -206,7 +206,7 @@ tasks.register("releaseDate") {
                 .format(
                     DateTimeFormatter
                         .ofLocalizedDateTime(FormatStyle.MEDIUM)
-                        .withLocale(Locale.Builder().setLanguage("pt-BR").build()),
+                        .withLocale(Locale.Builder().setLanguage("pt").setRegion("BR").build()),
                 ),
         )
     }
