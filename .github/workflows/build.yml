@@ -84,22 +84,12 @@ jobs:
           output-to: "step-summary"
           only-summary: "true"
 
-  build:
-    name: Package / shadowJar
-    runs-on: ubuntu-latest
-    needs:
-      - test
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Gradle and Java
-        uses: ./.github/gradle-action
-      - run: gradle shadowJar
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
-
   build-docker:
     name: Package / Docker / build
     runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
     needs:
       - test
     steps:
@@ -119,43 +109,15 @@ jobs:
       - name: Docker Image name
         id: dockerImageName
         run: echo "dockerImageName=$(gradle -q dockerImageName)" >> "$GITHUB_OUTPUT"
+      - name: Docker Image Metadata
+        id: dockerImageMetadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.dockerImageName.outputs.dockerImageName }}
       - uses: docker/scout-action@v1
         with:
           command: quickview
           image: ${{ steps.dockerImageName.outputs.dockerImageName }}
-          write-comment: false
-          summary: true
-
-  build-docker-native:
-    name: Package / Docker / native
-    runs-on: ubuntu-latest
-    needs:
-      - test
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup GraalVM
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '21'
-          distribution: 'graalvm'
-          cache: 'gradle'
-      - name: Run dockerBuildNative
-        run: GRAALVM_QUICK_BUILD=true ./gradlew dockerBuildNative
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
-      - name: List Docker images
-        run: docker images
-      - uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Docker Image name
-        id: dockerImageNameNative
-        run: echo "dockerImageNameNative=$(gradle -q dockerImageNameNative)" >> "$GITHUB_OUTPUT"
-      - uses: docker/scout-action@v1
-        with:
-          command: quickview
-          image: ${{ steps.dockerImageName.outputs.dockerImageNameNative }}
           write-comment: false
           summary: true
 
@@ -173,7 +135,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - check-if-prod
-      - build
+      - build-docker
     # Docs:
     # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
     permissions:
@@ -181,22 +143,14 @@ jobs:
       packages: read # to preserve default permissions
     steps:
       - uses: actions/checkout@v4
-        with:
-          # `0` indicates all history for all branches and tags.
-          # See https://github.com/actions/checkout#usage.
-          # This is relevant to properly generate git.properties file
-          # when deploying.
-          fetch-depth: 0
       - name: Set up Gradle and Java
         uses: ./.github/gradle-action
-      - name: Create Release Package
-        run: gradle clean shadowJar
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
       - name: Create Github Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RELEASE_TITLE=$(gradle releaseDate --quiet)
           TAG_NAME="v${{ github.run_number }}-$(git log HEAD -1 --pretty=format:'%h')"
-          gh release create "$TAG_NAME" ./build/libs/*.jar --title "$RELEASE_TITLE" --generate-notes --latest
+          gh release create "$TAG_NAME" --title "$RELEASE_TITLE" --generate-notes --latest
+      - name: Gradle Tasks Summary
+        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY

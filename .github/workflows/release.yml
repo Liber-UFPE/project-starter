@@ -1,0 +1,73 @@
+name: Publish Images
+
+on:
+  release:
+    types:
+      - "published"
+
+concurrency:
+  group: "releases"
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-docker-native:
+    name: Package / Docker / native
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+          cache: 'gradle'
+      # Used to run docker scout
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # Used to push the created image
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Docker image
+        run: GRAALVM_QUICK_BUILD=true ./gradlew dockerBuildNative
+      - name: Gradle Tasks Summary
+        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
+      - name: List Docker images
+        run: docker images
+      - name: Get Docker Image name
+        id: dockerImageName
+        run: echo "dockerImageName=$(gradle -q dockerImageName)" >> "$GITHUB_OUTPUT"
+      - name: Get Docker Image Metadata
+        id: dockerImageMetadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.dockerImageName.outputs.dockerImageName }}
+      - name: Analyse Image with Docker Scout
+        uses: docker/scout-action@v1
+        with:
+          command: quickview
+          image: ${{ steps.dockerImageName.outputs.dockerImageName }}
+          write-comment: false
+          summary: true
+      # As documented here: https://docs.docker.com/build/ci/github-actions/test-before-push/
+      - name: Test Image
+        run: docker run --rm ${{ steps.dockerImageName.outputs.dockerImageName }}
+      - name: Publish the image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
