@@ -103,7 +103,7 @@ tasks.withType<MicronautDockerfile> {
     instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
 }
 tasks.withType<NativeImageDockerfile> {
-    jdkVersion.set(javaVersion.toString())
+    graalImage.set("container-registry.oracle.com/graalvm/native-image:$javaVersion")
     baseImage.set("amazonlinux:2023")
     instructions.add(Dockerfile.EnvironmentVariableInstruction("MICRONAUT_ENVIRONMENTS", "docker"))
 }
@@ -126,6 +126,7 @@ graalvmNative {
             fallback.set(false)
             richOutput.set(true)
             buildArgs.add("--verbose")
+            buildArgs.add("--gc=G1")
             if (ci) {
                 // A little extra verbose on CI to prevent jobs being killed
                 // due to the lack of output (since native-image creation can
@@ -137,7 +138,7 @@ graalvmNative {
             }
 
             // Do a quick/un-optimized build. The intention is to validate
-            // it is possible to create a native-image. But, if it is running
+            // if it is possible to create a native-image. But, if it is running
             // a `release` job, then it must create an optimized image, hence
             // quickBuild must be false.
             quickBuild.set(ci && !releasing)
