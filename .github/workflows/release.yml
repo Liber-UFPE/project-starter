@@ -63,9 +63,16 @@ jobs:
           image: ${{ steps.dockerImageName.outputs.dockerImageName }}
           write-comment: false
           summary: true
-      # As documented here: https://docs.docker.com/build/ci/github-actions/test-before-push/
+      # Adapted from https://docs.docker.com/build/ci/github-actions/test-before-push/
       - name: Docker / Test Image
-        run: docker run --rm ${{ steps.dockerImageName.outputs.dockerImageName }}
+        # From `docker run --help`:
+        #   -d, --detach          Run container in background and print container ID
+        #   --rm                  Automatically remove the container when it exits
+        #   -p, --publish list    Publish a container's port(s) to the host
+        run: |
+          containerId=$(docker run -d --rm --publish 8080:8080 ${{ steps.dockerImageName.outputs.dockerImageName }})
+          docker container logs "$containerId"
+          curl -I http://localhost:8080/
       - name: Docker / Publish to GitHub Registry
         uses: docker/build-push-action@v5
         with:
