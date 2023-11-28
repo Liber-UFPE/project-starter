@@ -119,6 +119,7 @@ tasks.register("dockerImageNameNative") {
         }
     }
 }
+tasks.register("dockerImageName") { dependsOn("dockerImageNameNative") } // This is how Gradle add aliases.
 
 // See https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html
 graalvmNative {
@@ -127,16 +128,22 @@ graalvmNative {
         named("main") {
             fallback.set(false)
             richOutput.set(true)
-            buildArgs.add("--verbose")
-            buildArgs.add("--gc=G1")
+            buildArgs.addAll("--verbose", "-march=native")
+            buildArgs.addAll("--gc=G1", "-XX:MaxRAMPercentage=100")
             if (ci) {
                 // A little extra verbose on CI to prevent jobs being killed
                 // due to the lack of output (since native-image creation can
                 // take a long time to complete).
-                jvmArgs.add("-Xlog:gc")
+                jvmArgs.add("-Xlog:gc*")
                 // 7GB is what is available when using Github-hosted runners:
                 // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-                buildArgs.addAll("-J-Xmx7G", "-XX:MaxRAMPercentage=100")
+                buildArgs.addAll("-J-Xmx7G")
+            } else {
+                // `gc` is less verbose than `gc*`, and good enough for local builds.
+                jvmArgs.add("-Xlog:gc")
+                // 16G is a good chunk of memory, but reducing GC speeds up
+                // the native image generation.
+                buildArgs.addAll("-J-Xmx16G")
             }
         }
     }
@@ -239,13 +246,17 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
 dependencies {
     ksp(mn.micronaut.http.validation)
     ksp(mn.micronaut.serde.processor)
-    implementation(mn.micronaut.kotlin.extension.functions)
+    implementation(mn.micronaut.aop)
     implementation(mn.micronaut.kotlin.runtime)
+    implementation(mn.micronaut.kotlin.extension.functions)
     implementation(mn.micronaut.serde.jackson)
     implementation(mn.micronaut.views.jte)
+    implementation(mn.micronaut.management)
     compileOnly(mn.micronaut.http.client)
     testImplementation(mn.micronaut.http.client)
 
+    // Creates a dependency provider for graal (org.graalvm.nativeimage:svm)
+    compileOnly(mn.graal.asProvider())
     runtimeOnly(mn.logback.classic)
     runtimeOnly(mn.jackson.module.kotlin)
 
