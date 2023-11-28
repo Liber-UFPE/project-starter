@@ -129,7 +129,8 @@ graalvmNative {
             fallback.set(false)
             richOutput.set(true)
             buildArgs.addAll("--verbose", "-march=native")
-            buildArgs.addAll("--gc=G1", "-XX:MaxRAMPercentage=100")
+            buildArgs.addAll("--gc=G1")
+            jvmArgs.add("-XX:MaxRAMPercentage=100")
             if (ci) {
                 // A little extra verbose on CI to prevent jobs being killed
                 // due to the lack of output (since native-image creation can
@@ -137,13 +138,13 @@ graalvmNative {
                 jvmArgs.add("-Xlog:gc*")
                 // 7GB is what is available when using Github-hosted runners:
                 // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-                buildArgs.addAll("-J-Xmx7G")
+                jvmArgs.addAll("-Xmx7G")
             } else {
                 // `gc` is less verbose than `gc*`, and good enough for local builds.
                 jvmArgs.add("-Xlog:gc")
                 // 16G is a good chunk of memory, but reducing GC speeds up
                 // the native image generation.
-                buildArgs.addAll("-J-Xmx16G")
+                jvmArgs.addAll("-Xmx16G")
             }
         }
     }
