@@ -138,13 +138,13 @@ graalvmNative {
                 jvmArgs.add("-Xlog:gc*")
                 // 7GB is what is available when using Github-hosted runners:
                 // https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-                jvmArgs.addAll("-Xmx7G")
+                jvmArgs.addAll("-Xms7G", "-Xmx7G")
             } else {
                 // `gc` is less verbose than `gc*`, and good enough for local builds.
                 jvmArgs.add("-Xlog:gc")
                 // 16G is a good chunk of memory, but reducing GC speeds up
                 // the native image generation.
-                jvmArgs.addAll("-Xmx16G")
+                jvmArgs.addAll("-Xms16G", "-Xmx16G")
             }
         }
     }
