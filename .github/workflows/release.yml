@@ -68,6 +68,7 @@ jobs:
           summary: true
       # Adapted from https://docs.docker.com/build/ci/github-actions/test-before-push/
       - name: Docker / Test Image
+        id: dockerImageTest
         # From `docker run --help`:
         #   -d, --detach          Run container in background and print container ID
         #   --rm                  Automatically remove the container when it exits
@@ -79,16 +80,11 @@ jobs:
           sleep 10
           docker container logs "$containerId"
           curl -I http://localhost:8080/
-          ls -l .
-          find . -name Dockerfile
-          echo $PWD
-          [ -d "$PWD/build" ] && ls -l "$PWD/build"
-          [ -d "$PWD/build/docker" ] && ls -l "$PWD/build/docker"
-          [ -d "$PWD/build/docker/main" ] && ls -l "$PWD/build/docker/main"
+          echo "dockerFileLocation=$($PWD/build/docker/main/Dockerfile)" >> "$GITHUB_OUTPUT"
       - name: Docker / Publish to GitHub Registry
         uses: docker/build-push-action@v5
         with:
-          file: $PWD/build/docker/main/Dockerfile
+          file: ${{ steps.dockerImageTest.outputs.dockerFileLocation }}
           push: true
           tags: ${{ steps.dockerImageMetadata.outputs.tags }}
           labels: ${{ steps.dockerImageMetadata.outputs.labels }}
