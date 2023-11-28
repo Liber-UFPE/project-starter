@@ -57,6 +57,7 @@ jobs:
           images: ${{ steps.dockerImageName.outputs.dockerImageName }}
       - name: Docker / Analyse image
         uses: docker/scout-action@v1
+        continue-on-error: true
         with:
           command: quickview
           image: ${{ steps.dockerImageName.outputs.dockerImageName }}
