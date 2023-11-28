@@ -112,11 +112,13 @@ tasks.register("dockerImageNameNative") {
     doFirst {
         val images = tasks.named<DockerBuildImage>("dockerBuildNative").get().images.get()
         val maybeRegistry = registry()
-        if (maybeRegistry.isPresent) {
-            println(images.find { it.contains(maybeRegistry.get()) })
+        val imageName = if (maybeRegistry.isPresent) {
+            images.find { it.contains(maybeRegistry.get()) }
         } else {
-            println(images.first())
+            images.first()
         }
+        // No need to show `:latest`, so remove if it is present
+        println(imageName?.replace(":latest", ""))
     }
 }
 tasks.register("dockerImageName") { dependsOn("dockerImageNameNative") } // This is how Gradle add aliases.
