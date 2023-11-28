@@ -80,7 +80,7 @@ jobs:
           sleep 10
           docker container logs "$containerId"
           curl -I http://localhost:8080/
-          echo "dockerFileLocation=$($PWD/build/docker/main/Dockerfile)" >> "$GITHUB_OUTPUT"
+          echo "dockerFileLocation=$PWD/build/docker/main/Dockerfile" >> "$GITHUB_OUTPUT"
       - name: Docker / Publish to GitHub Registry
         uses: docker/build-push-action@v5
         with:
