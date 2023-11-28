@@ -74,6 +74,9 @@ jobs:
         #   -p, --publish list    Publish a container's port(s) to the host
         run: |
           containerId=$(docker run -d --rm --publish 8080:8080 ${{ steps.dockerImageName.outputs.dockerImageName }})
+          sleep 10
+          docker container logs "$containerId"
+          sleep 10
           docker container logs "$containerId"
           curl -I http://localhost:8080/
       - name: Docker / Publish to GitHub Registry
