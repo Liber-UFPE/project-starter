@@ -94,11 +94,17 @@ fun imageNames(): List<String> {
 tasks.named<DockerBuildImage>("dockerBuild") { images.addAll(imageNames()) }
 tasks.named<DockerBuildImage>("dockerBuildNative") { images.addAll(imageNames()) }
 tasks.withType<MicronautDockerfile> {
+    // Amazon Correto is slightly larger than `eclipse-temurin` image,
+    // but seems better maintained and with no vulnerabilities reported.
     baseImage.set("amazoncorretto:$javaVersion")
     environmentVariable("MICRONAUT_ENVIRONMENTS", "docker")
 }
 tasks.withType<NativeImageDockerfile> {
+    // Oracle's images provide access to G1 GC and other features.
     graalImage.set("container-registry.oracle.com/graalvm/native-image:$javaVersion")
+    // Using a distroless image generates a "mostly-static" image:
+    // https://micronaut-projects.github.io/micronaut-gradle-plugin/latest/#_build_mostly_static_native_executables
+    // https://www.graalvm.org/latest/reference-manual/native-image/guides/build-static-executables/
     baseImage("gcr.io/distroless/cc-debian12")
     environmentVariable("MICRONAUT_ENVIRONMENTS", "docker")
 }
