@@ -1,5 +1,6 @@
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
 import io.micronaut.gradle.docker.MicronautDockerfile
 import io.micronaut.gradle.docker.NativeImageDockerfile
@@ -217,6 +218,16 @@ tasks.register("releaseDate") {
 tasks.register<Copy>("installGitHooks") {
     from(layout.projectDirectory.file("scripts/pre-commit"))
     into(layout.projectDirectory.dir(".git/hooks/"))
+}
+
+tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
+    rejectVersionIf {
+        val version = this.currentVersion
+        val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.uppercase().contains(it) }
+        val regex = "^[0-9,.v-]+(-r)?\$".toRegex()
+        val possiblySnapshot = "\\d{8}".toRegex()
+        !stableKeyword && !version.matches(regex) || version.matches(possiblySnapshot)
+    }
 }
 
 dependencies {
