@@ -155,7 +155,7 @@ jobs:
         uses: ./.github/gradle-action
       - name: Create Github Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
         run: |
           RELEASE_TITLE=$(gradle releaseDate --quiet)
           TAG_NAME="v${{ github.run_number }}-$(git log HEAD -1 --pretty=format:'%h')"
