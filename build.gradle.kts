@@ -13,9 +13,9 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrElse
 
 plugins {
-    kotlin("jvm") version "1.9.20"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.20"
-    id("com.google.devtools.ksp") version "1.9.20-1.0.14"
+    kotlin("jvm") version "1.9.21"
+    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.21"
+    id("com.google.devtools.ksp") version "1.9.21-1.0.14"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.2.0"
     id("gg.jte.gradle") version "3.1.5"
