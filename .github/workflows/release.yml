@@ -79,6 +79,7 @@ jobs:
       - name: Docker / Publish to GitHub Registry
         uses: docker/build-push-action@v5
         with:
+          file: ./build/docker/native-main/DockerfileNative
           push: true
           tags: ${{ steps.dockerImageMetadata.outputs.tags }}
           labels: ${{ steps.dockerImageMetadata.outputs.labels }}
