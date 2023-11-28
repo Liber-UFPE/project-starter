@@ -151,14 +151,10 @@ jobs:
       packages: read # to preserve default permissions
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Gradle and Java
-        uses: ./.github/gradle-action
       - name: Create Github Release
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
         run: |
-          RELEASE_TITLE=$(gradle releaseDate --quiet)
+          RELEASE_TITLE=$(date '+%Y %b %d %H:%M:%S')
           TAG_NAME="v${{ github.run_number }}-$(git log HEAD -1 --pretty=format:'%h')"
           gh release create "$TAG_NAME" --title "$RELEASE_TITLE" --generate-notes --latest
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
