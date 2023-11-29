@@ -37,13 +37,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # Used to push the created image
-      - name: Docker / Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.RELEASE_GITHUB_TOKEN }}
       - name: Docker / Create image
         run: ./gradlew dockerBuild
       - name: Gradle Tasks Summary
@@ -75,6 +68,12 @@ jobs:
           sleep 10
           docker container logs "$containerId"
           curl -I http://localhost:8080/
+      - name: Docker / Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.GITHUB_TOKEN }}
       - name: Docker / Publish to GitHub Registry
         run: docker push --all-tags ${{ steps.dockerImageName.outputs.dockerImageName }}
 
