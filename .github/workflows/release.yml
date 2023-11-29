@@ -73,7 +73,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ github.GITHUB_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker / Publish to GitHub Registry
         run: docker push --all-tags ${{ steps.dockerImageName.outputs.dockerImageName }}
 
