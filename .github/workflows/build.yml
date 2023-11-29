@@ -108,6 +108,23 @@ jobs:
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
       - name: Docker / List images
         run: docker images
+      # Adapted from https://docs.docker.com/build/ci/github-actions/test-before-push/
+      - name: Docker / Get image name
+        id: dockerImageName
+        run: echo "dockerImageName=$(gradle -q dockerImageName)" >> "$GITHUB_OUTPUT"
+      - name: Docker / Test Image
+        id: dockerImageTest
+        # From `docker run --help`:
+        #   -d, --detach          Run container in background and print container ID
+        #   --rm                  Automatically remove the container when it exits
+        #   -p, --publish list    Publish a container's port(s) to the host
+        run: |
+          containerId=$(docker run -d --rm --publish 8080:8080 ${{ steps.dockerImageName.outputs.dockerImageName }})
+          sleep 10
+          docker container logs "$containerId"
+          sleep 10
+          docker container logs "$containerId"
+          curl -I http://localhost:8080/
 
   check-if-prod:
     if: ${{ github.ref == 'refs/heads/main' }}
