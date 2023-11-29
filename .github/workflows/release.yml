@@ -75,11 +75,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker / Publish to GitHub Registry
-        run:
+        run: |
           git_tag=${{ github.ref_name }}
           last_git_sha=$(git log --pretty=format:'%h' HEAD -1)
           source_image_name=${{ steps.dockerImageName.outputs.dockerImageName }}
 
+          echo "Using git tag $git_tag"
+          echo "Using last git sha $last_git_sha"
+          echo "Context's github.sha = ${{ github.sha }}"
+
+          echo "Images to tag => $source_image_name:$git_tag"
+          echo "Images to tag => $source_image_name:$last_git_sha"
           docker tag "$source_image_name" "$source_image_name:$git_tag"
           docker tag "$source_image_name" "$source_image_name:$last_git_sha"
 
