@@ -53,11 +53,6 @@ jobs:
       - name: Docker / Get image name
         id: dockerImageName
         run: echo "dockerImageName=$(gradle -q dockerImageName)" >> "$GITHUB_OUTPUT"
-      - name: Docker / Get image metadata
-        id: dockerImageMetadata
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ steps.dockerImageName.outputs.dockerImageName }}
       - name: Docker / Analyse image
         uses: docker/scout-action@v1
         continue-on-error: true
@@ -80,15 +75,8 @@ jobs:
           sleep 10
           docker container logs "$containerId"
           curl -I http://localhost:8080/
-          echo "dockerFileLocation=$(find $PWD -name Dockerfile | head -1)" >> "$GITHUB_OUTPUT"
       - name: Docker / Publish to GitHub Registry
-        uses: docker/build-push-action@v5
-        with:
-          file: ${{ steps.dockerImageTest.outputs.dockerFileLocation }}
-          push: true
-          tags: ${{ steps.dockerImageMetadata.outputs.tags }}
-          labels: ${{ steps.dockerImageMetadata.outputs.labels }}
-
+        run: docker push --all-tags ${{ steps.dockerImageName.outputs.dockerImageName }}
 
 #  build-docker-native:
 #    name: Package / Docker / native
