@@ -6,10 +6,6 @@ import io.micronaut.gradle.docker.MicronautDockerfile
 import io.micronaut.gradle.docker.NativeImageDockerfile
 import java.lang.System.getenv
 import java.time.Duration
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.Locale
 import java.util.Optional
 import kotlin.jvm.optionals.getOrElse
 
@@ -212,21 +208,6 @@ buildTimeTracker {
             take = Int.MAX_VALUE,
         ),
     )
-}
-
-// Outputs releaseDate in the format `2023 Nov 24 15:20:28`.
-tasks.register("releaseDate") {
-    doLast {
-        println(
-            ZonedDateTime
-                .now()
-                .format(
-                    DateTimeFormatter
-                        .ofLocalizedDateTime(FormatStyle.MEDIUM)
-                        .withLocale(Locale.Builder().setLanguage("pt").setRegion("BR").build()),
-                ),
-        )
-    }
 }
 
 // Install pre-commit git hooks to run ktlint and detekt

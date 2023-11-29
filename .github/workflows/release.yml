@@ -75,7 +75,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker / Publish to GitHub Registry
-        run: docker push --all-tags ${{ steps.dockerImageName.outputs.dockerImageName }}
+        run:
+          git_tag=${{ github.ref_name }}
+          last_git_sha=$(git log --pretty=format:'%h' HEAD -1)
+          source_image_name=${{ steps.dockerImageName.outputs.dockerImageName }}
+
+          docker tag "$source_image_name" "$source_image_name:$git_tag"
+          docker tag "$source_image_name" "$source_image_name:$last_git_sha"
+
+          docker push --all-tags ${{ steps.dockerImageName.outputs.dockerImageName }}
 
 #  build-docker-native:
 #    name: Package / Docker / native
