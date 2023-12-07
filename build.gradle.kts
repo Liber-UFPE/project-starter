@@ -49,9 +49,9 @@ val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
 
 val javaVersion: Int = 21
 
-val kotlinVersion: String = project.properties["kotlinVersion"] as String
-val micronautVersion: String = project.properties["micronautVersion"] as String
-val jteVersion: String = project.properties["jteVersion"] as String
+val kotlinVersion: String = properties["kotlinVersion"] as String
+val micronautVersion: String = properties["micronautVersion"] as String
+val jteVersion: String = properties["jteVersion"] as String
 
 version = "0.1"
 group = "br.ufpe.liber"
@@ -76,6 +76,7 @@ tasks.named<Test>("test") {
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
 
     // Only generate reports when running on CI. Helps to speed up test execution.
+    // https://docs.gradle.org/current/userguide/performance.html#disable_reports
     reports.html.required = runningOnCI
     reports.junitXml.required = runningOnCI
 }
@@ -207,7 +208,7 @@ testlogger {
 buildTimeTracker {
     markdownConfiguration.set(
         MarkdownConfiguration(
-            reportFile = project.reporting.file("build-times.md").absolutePath,
+            reportFile = reporting.file("build-times.md").absolutePath,
             minDuration = Duration.ofMillis(0),
             withTableLabels = true,
             sorted = true,
