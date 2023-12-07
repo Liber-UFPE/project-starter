@@ -11,7 +11,7 @@ import kotlin.jvm.optionals.getOrElse
 
 plugins {
     kotlin("jvm") version "1.9.21"
-    id("org.jetbrains.kotlin.plugin.allopen") version "1.9.21"
+    kotlin("plugin.allopen") version "1.9.21"
     id("com.google.devtools.ksp") version "1.9.21-1.0.15"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.2.0"
@@ -40,9 +40,12 @@ plugins {
     // To check dependency updates
     // https://github.com/ben-manes/gradle-versions-plugin
     id("com.github.ben-manes.versions") version "0.50.0"
+    // To manage docker images
+    // https://github.com/bmuschko/gradle-docker-plugin
+    id("com.bmuschko.docker-remote-api") version "9.4.0"
 }
 
-val ci: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
+val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
 
 val javaVersion: Int = 21
 
@@ -71,6 +74,10 @@ tasks.named<Test>("test") {
     useJUnitPlatform()
     // See https://kotest.io/docs/extensions/system_extensions.html#system-environment
     jvmArgs("--add-opens=java.base/java.util=ALL-UNNAMED")
+
+    // Only generate reports when running on CI. Helps to speed up test execution.
+    reports.html.required = runningOnCI
+    reports.junitXml.required = runningOnCI
 }
 
 testSets {
@@ -126,10 +133,9 @@ graalvmNative {
         named("main") {
             fallback.set(false)
             richOutput.set(true)
-            buildArgs.addAll("--verbose", "-march=native")
-            buildArgs.addAll("--gc=G1")
+            buildArgs.addAll("--verbose", "-march=native", "--gc=G1")
             jvmArgs.add("-XX:MaxRAMPercentage=100")
-            if (ci) {
+            if (runningOnCI) {
                 // A little extra verbose on CI to prevent jobs being killed
                 // due to the lack of output (since native-image creation can
                 // take a long time to complete).
