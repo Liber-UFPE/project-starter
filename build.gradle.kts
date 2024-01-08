@@ -73,6 +73,13 @@ java {
     }
 }
 
+diktat {
+    inputs {
+        include("src/**/*.kt")
+        exclude("src/accessibilityTest/**/*.kt")
+    }
+}
+
 tasks.named<Test>("test") {
     useJUnitPlatform()
     // See https://kotest.io/docs/extensions/system_extensions.html#system-environment
