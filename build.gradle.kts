@@ -43,6 +43,9 @@ plugins {
     // To manage docker images
     // https://github.com/bmuschko/gradle-docker-plugin
     id("com.bmuschko.docker-remote-api") version "9.4.0"
+    // Add diktat
+    // https://github.com/marcospereira/diktat
+    id("com.saveourtool.diktat") version "2.0.0"
 }
 
 val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
