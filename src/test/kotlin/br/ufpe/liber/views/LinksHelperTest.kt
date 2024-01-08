@@ -26,12 +26,15 @@ class LinksHelperTest : BehaviorSpec({
         `when`("""when base url is "/" """) {
             withEnvironment("PROJECT_STARTER_PATH", "/") {
                 forAll(
-                    row("/some-path", "/some-path"),
-                    row("some-path", "/some-path"),
-                    row("/some-path/", "/some-path/"),
-                    row("some-path/", "/some-path/"),
-                    row("/", "/"),
-                    row("", "/"),
+                    table(
+                        headers("path", "expectedResult"),
+                        row("/some-path", "/some-path"),
+                        row("some-path", "/some-path"),
+                        row("/some-path/", "/some-path/"),
+                        row("some-path/", "/some-path/"),
+                        row("/", "/"),
+                        row("", "/"),
+                    ),
                 ) { path, expectedResult ->
                     then("generate correct link for $path") {
                         LinksHelper.linkTo(path) shouldBeEqual expectedResult
@@ -49,7 +52,7 @@ class LinksHelperTest : BehaviorSpec({
                         row("some-path", "/base/some-path"),
                         row("/some-path/", "/base/some-path/"),
                         row("some-path/", "/base/some-path/"),
-                        row("/", "/base/"),
+                        row("/", "/base"),
                         row("", "/base"),
                     ),
                 ) { path, expectedResult ->
@@ -63,12 +66,15 @@ class LinksHelperTest : BehaviorSpec({
         `when`("""when base url is "/base/" """) {
             withEnvironment("PROJECT_STARTER_PATH", "/base/") {
                 forAll(
-                    row("/some-path", "/base/some-path"),
-                    row("some-path", "/base/some-path"),
-                    row("/some-path/", "/base/some-path/"),
-                    row("some-path/", "/base/some-path/"),
-                    row("/", "/base/"),
-                    row("", "/base/"),
+                    table(
+                        headers("path", "expectedResult"),
+                        row("/some-path", "/base/some-path"),
+                        row("some-path", "/base/some-path"),
+                        row("/some-path/", "/base/some-path/"),
+                        row("some-path/", "/base/some-path/"),
+                        row("/", "/base/"),
+                        row("", "/base/"),
+                    ),
                 ) { path, expectedResult ->
                     then("generate correct link for $path") {
                         LinksHelper.linkTo(path) shouldBeEqual expectedResult
