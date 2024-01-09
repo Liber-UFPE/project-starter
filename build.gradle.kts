@@ -79,6 +79,9 @@ diktat {
         exclude("src/accessibilityTest/**/*.kt")
     }
 }
+tasks.named("check") {
+    dependsOn("diktatCheck")
+}
 
 tasks.named<Test>("test") {
     useJUnitPlatform()
