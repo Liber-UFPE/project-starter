@@ -18,6 +18,7 @@ jobs:
       - uses: marcospereira/kotlin-diktat-action@main
         with:
           patterns: "src/main/kotlin src/test/kotlin"
+          log-level: "debug"
 
   detekt:
     name: Code Analysis / detekt
