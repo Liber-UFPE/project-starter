@@ -33,8 +33,11 @@ jobs:
       - compile
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/gradle-action
-      - run: ./gradlew diktatCheck
+      - name: Download and run diktat
+        run: |
+          curl -L -O "https://github.com/saveourtool/diktat/releases/download/v2.0.0/diktat"
+          chmod +x diktat
+          ./diktat --group-by-file src/main/kotlin src/test/kotlin
 
   detekt:
     name: Code Analysis / detekt
