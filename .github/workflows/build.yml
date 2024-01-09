@@ -33,11 +33,8 @@ jobs:
       - compile
     steps:
       - uses: actions/checkout@v4
-      - uses: saveourtool/benedikt@v2
-        with:
-          input-paths: |
-            src/main/kotlin
-            src/test/kotlin
+      - uses: ./.github/gradle-action
+      - run: ./gradlew diktatCheck
 
   detekt:
     name: Code Analysis / detekt
