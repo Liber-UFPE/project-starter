@@ -15,11 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download and run diktat
-        run: |
-          curl -L -O "https://github.com/saveourtool/diktat/releases/download/v2.0.0/diktat"
-          chmod +x diktat
-          ./diktat --group-by-file src/main/kotlin src/test/kotlin
+      - uses: marcospereira/kotlin-diktat-action@main
+        with:
+          patterns: "src/main/kotlin src/test/kotlin"
 
   detekt:
     name: Code Analysis / detekt
