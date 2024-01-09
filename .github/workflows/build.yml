@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: marcospereira/kotlin-diktat-action@main
+      - uses: marcospereira/kotlin-diktat-action@v1
         with:
           patterns: "src/main/kotlin src/test/kotlin"
           log-level: "debug"
