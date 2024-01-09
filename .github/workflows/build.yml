@@ -26,6 +26,17 @@ jobs:
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 
+  diktat:
+    name: Code Analysis / diktat
+    runs-on: ubuntu-latest
+    needs:
+      - compile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: saveourtool/benedikt@v2
+        with:
+          debug: true
+
   detekt:
     name: Code Analysis / detekt
     runs-on: ubuntu-latest
@@ -56,6 +67,7 @@ jobs:
     name: Tests / test
     runs-on: ubuntu-latest
     needs:
+      - diktat
       - detekt
       - ktlint
     steps:
