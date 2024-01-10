@@ -14,6 +14,7 @@ import kotlin.jvm.optionals.getOrElse
 plugins {
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.allopen") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
     id("com.google.devtools.ksp") version "1.9.22-1.0.16"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.2.1"
@@ -314,6 +315,7 @@ dependencies {
 
     implementation(kotlin("reflect", kotlinVersion))
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 
     // jte dependencies
     jteGenerate("gg.jte:jte-models:$jteVersion")
