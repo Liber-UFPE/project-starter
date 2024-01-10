@@ -1,6 +1,8 @@
+import br.ufpe.liber.tasks.GenerateAssetsMetadataTask
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import com.github.gradle.node.npm.task.NpmTask
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
 import io.micronaut.gradle.docker.MicronautDockerfile
 import io.micronaut.gradle.docker.NativeImageDockerfile
@@ -46,6 +48,9 @@ plugins {
     // Add diktat
     // https://github.com/marcospereira/diktat
     id("com.saveourtool.diktat") version "2.0.0"
+    // To run npm/node/js tasks
+    // https://github.com/node-gradle/gradle-node-plugin
+    id("com.github.node-gradle.node") version "7.0.1"
 }
 
 val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
@@ -93,6 +98,49 @@ tasks.named<Test>("test") {
     reports.html.required = runningOnCI
     reports.junitXml.required = runningOnCI
 }
+
+/* -------------------------------- */
+/* Start: Node/assets configuration */
+/* -------------------------------- */
+node {
+    version = "18.19.0"
+    download = false
+}
+
+tasks {
+    val npmAssetsPipeline by registering(NpmTask::class) {
+        group = "Assets"
+        description = "Executes assets pipeline using npm"
+
+        inputs.files(fileTree(layout.projectDirectory.dir("src/main/resources")))
+        args = listOf("run", "assetsPipeline")
+        outputs.files(fileTree(layout.buildDirectory.dir("resources/main/public")))
+
+        dependsOn("npmInstall")
+    }
+
+    val generateMetafile by registering(GenerateAssetsMetadataTask::class) {
+        group = "Assets"
+        description = "Generate assets metadata file"
+        assetsDirectory = layout.buildDirectory.dir("resources/main/public/")
+
+        dependsOn(npmAssetsPipeline)
+    }
+
+    val assetsPipeline by registering {
+        group = "Assets"
+        description = "Executes the complete assets pipeline including manifest generation"
+
+        dependsOn(npmAssetsPipeline, generateMetafile)
+    }
+
+    processResources {
+        dependsOn(assetsPipeline)
+    }
+}
+/* ------------------------------ */
+/* End: Node/assets configuration */
+/* ------------------------------ */
 
 testSets {
     create("accessibilityTest")
