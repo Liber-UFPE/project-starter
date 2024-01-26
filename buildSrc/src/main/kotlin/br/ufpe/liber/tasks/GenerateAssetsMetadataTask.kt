@@ -15,14 +15,19 @@ import org.apache.tika.mime.MediaType
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputFile
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
+@CacheableTask
 abstract class GenerateAssetsMetadataTask : DefaultTask() {
 
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val assetsDirectory: DirectoryProperty
 
     @get:OutputFile
@@ -39,14 +44,21 @@ abstract class GenerateAssetsMetadataTask : DefaultTask() {
         val metafile = assetsMetadataFile.get().asFile
 
         val metadata: MutableList<JsonObject> = mutableListOf()
-        val regex = "(?<filename>[A-Za-z/-]+).(?<hash>[A-Z0-9]{8}).(?<extension>[a-z]+)".toPattern()
+
+        // Matching examples:
+        // - file.AZ234FKU.jpg
+        // - 404.ADF092JF0.jpg
+        // - Img.1F7F8IFU5.jpg
+        //
+        // The files above represent how esbuild renames assets when using content hash.
+        val regex = "(?<filename>[A-Za-z0-9/-]+).(?<hash>[A-Z0-9]{8}).(?<extension>[a-z]+)".toPattern()
 
         val digest = DigestUtils.getSha384Digest()
-        val integrityGenerator = { file: File ->
-            "sha384-${Base64.encodeBase64String(digest.digest(file.readBytes()))}"
-        }
+        val integrityGenerator = { data: ByteArray -> "sha384-${Base64.encodeBase64String(digest.digest(data))}" }
+        val etagGenerator = { data: ByteArray -> DigestUtils.md5Hex(data) }
 
         val encodings = listOf("br", "gz", "zz")
+        val tikaConfig = TikaConfig()
 
         assetsParentDir.walk()
             .filter(File::isFile)
@@ -56,8 +68,11 @@ abstract class GenerateAssetsMetadataTask : DefaultTask() {
                 val matcher = regex.matcher(filename)
 
                 if (matcher.matches()) {
-                    val integrity = integrityGenerator(file)
-                    val mediaType = detectMediaType(file)
+                    val fileData = file.readBytes()
+                    val integrity = integrityGenerator(fileData)
+                    val etag = etagGenerator(fileData)
+                    val lastModified = file.lastModified()
+                    val mediaType = detectMediaType(file, tikaConfig)
 
                     val basename = matcher.group("filename")
                     val hash = matcher.group("hash")
@@ -72,9 +87,11 @@ abstract class GenerateAssetsMetadataTask : DefaultTask() {
                             "filename" to filename.toJson(),
                             "hash" to hash.toJson(),
                             "integrity" to integrity.toJson(),
+                            "etag" to etag.toJson(),
+                            "lastModified" to lastModified.toJson(),
                             "extension" to extension.toJson(),
                             "mediaType" to mediaType.toString().toJson(),
-                            "encodings" to JsonArray(findEncodings(file)),
+                            "supportedEncodings" to JsonArray(findEncodings(file)),
                         ).toJson(),
                     )
                 }
@@ -87,14 +104,12 @@ abstract class GenerateAssetsMetadataTask : DefaultTask() {
         metafile.writeText(prettyJson.encodeToString(metadata))
     }
 
-    private val tika: TikaConfig = TikaConfig()
-
     @Suppress("detekt:ForbiddenComment")
-    private fun detectMediaType(file: File): MediaType {
+    private fun detectMediaType(file: File, tikaConfig: TikaConfig): MediaType {
         val metadata = Metadata()
         // TODO: Check the return type for JavaScript (text/javascript vs application/javascript)
         // See https://issues.apache.org/jira/browse/TIKA-4119
-        return tika.detector.detect(TikaInputStream.get(file.toPath(), metadata), metadata)
+        return tikaConfig.detector.detect(TikaInputStream.get(file.toPath(), metadata), metadata)
     }
 
     private fun findEncodings(file: File): List<JsonObject> = file
