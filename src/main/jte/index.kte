@@ -1,11 +1,13 @@
 @template.layout(title = "Início", content = @`
-    @template.partials.top(
-        title = "Bemvindo ao project-starter",
-        subtext = @`Esse é apenas um template para projetos do Laboratório Liber`
-    )
-    @template.partials.main(content = @`
-        <div class="row mb-2">
-            <p class="lead">Adicione o conteúdo correto para seu projeto.</p>
+    <section class="main-section-bg">
+        <div class="px-4 pt-8 mx-auto max-w-screen-xl z-10 relative md:pt-16 text-center">
+            <h1 class="mb-4 leading-none text-6xl text-gray-800 tracking-tight text-white md:text-8xl lg:text-8xl">Project Starter Template</h1>
         </div>
+    </section>
+    @template.partials.content-section(content = @`
+        <article class="format lg:format-lg">
+            <p class="mb-3 text-3xl text-gray-800">Some text</p>
+            <p class="text-gray-800 leading-relaxed mb-4">Some more tesxt</p>
+        </article>
     `)
 `)

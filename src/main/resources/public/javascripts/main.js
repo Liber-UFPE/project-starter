@@ -1,20 +1,32 @@
-import {Collapse} from "bootstrap";
-import * as Turbo from 'https://cdn.skypack.dev/pin/@hotwired/turbo@v7.3.0-44BiCcz1UaBhgMf1MCRj/mode=imports,min/optimized/@hotwired/turbo.js';
+import {initFlowbite, Collapse} from "flowbite";
 
-document.addEventListener("turbo:before-fetch-request", function (_e) {
-    Turbo.navigator.delegate.adapter.showProgressBar();
+initFlowbite();
+
+window.onload = () => {
+    const navbarSearchButton = document.getElementById("navbar-search-button");
+    navbarSearchButton.onclick = () => {
+        const queryInput = document.getElementById("sm-query-input");
+        queryInput.focus();
+    };
+};
+
+// https://htmx.org/events/#htmx:afterRequest
+document.documentElement.addEventListener("htmx:afterRequest", () => {
+    const indicator = document.getElementById("brand-button");
+    indicator.classList.add("htmx-request");
+
+    // If the request completes too fast, this avoids the indicator to just flicking.
+    setTimeout(() => indicator.classList.remove("htmx-request"), 1300);
 });
-document.addEventListener("turbo:frame-load", function (_e) {
-    Turbo.navigator.delegate.adapter.progressBar.hide()
+
+document.documentElement.addEventListener("htmx:afterRequest", () => {
+    const $targetEl = document.getElementById("navbar-search");
+
+    const instanceOptions = {
+        id: "navbar",
+        override: true
+    };
+
+    const collapse = new Collapse($targetEl, null, {}, instanceOptions);
+    collapse.collapse();
 });
-
-function setupCollapsableComponents() {
-    const collapseElementList = document.querySelectorAll(".collapse");
-    [...collapseElementList].forEach(collapseEl =>
-        collapseEl.addEventListener("click", () => new Collapse(collapseEl))
-    );
-}
-
-window.addEventListener("load", setupCollapsableComponents);
-
-console.info("Ooops! Ainda tem algumas coisas para customizar no template");

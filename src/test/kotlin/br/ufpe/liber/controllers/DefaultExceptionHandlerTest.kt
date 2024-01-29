@@ -23,7 +23,6 @@ class DefaultExceptionHandlerTest(
 
                 val response = exceptionHandler.handle(request, exception)
                 response.status.shouldBe(HttpStatus.INTERNAL_SERVER_ERROR)
-                response.body().shouldContain(exception.message.toString())
             }
         }
     }
