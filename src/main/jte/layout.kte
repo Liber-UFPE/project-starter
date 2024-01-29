@@ -76,22 +76,19 @@
                     </div>
                     <ul class="flex flex-col p-4 mt-4 font-medium md:space-x-8 md:flex-row md:mt-0">
                         <li>
-                            @template.partials.navlink(path = "/", text = "Inicio", title = "Página inicial")
+                            @template.partials.navlink(path = "#", text = "Link #1", title = "Esse é o link #1")
                         </li>
                         <li>
-                            @template.partials.navlink(path = "/obras", text = "Obras", title = "Link para página de Obras")
+                            @template.partials.navlink(path = "#", text = "Link #2", title = "Esse é o link #2")
                         </li>
                         <li>
-                            @template.partials.navlink(path = "/projeto", text = "Projeto", title = "Link para página de Projeto")
+                            @template.partials.navlink(path = "#", text = "Link #3", title = "Esse é o link #3")
                         </li>
                         <li>
-                            @template.partials.navlink(path = "/jose-hyginio", text = "Quem sou eu?", title = "Link para página de Quem sou eu?")
+                            @template.partials.navlink(path = "#", text = "Link #4", title = "Esse é o link #4")
                         </li>
                         <li>
-                            @template.partials.navlink(path = "/equipe", text = "Equipe", title = "Link para página de Equipe")
-                        </li>
-                        <li>
-                            @template.partials.navlink(path = "/contato", text = "Contato", title = "Link para página de Contato")
+                            @template.partials.navlink(path = "#", text = "Link #5", title = "Esse é o link #5")
                         </li>
                     </ul>
                 </div>
