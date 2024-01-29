@@ -251,6 +251,9 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
 }
 
 dependencies {
+    // TEMP: Brings logback 1.4.14. Remove when micronaut-core updates.
+    implementation(platform("io.micronaut.logging:micronaut-logging-bom:1.2.2"))
+
     ksp(mn.micronaut.http.validation)
     ksp(mn.micronaut.serde.processor)
     implementation(mn.micronaut.aop)
@@ -262,6 +265,9 @@ dependencies {
     compileOnly(mn.micronaut.http.client)
     testImplementation(mn.micronaut.http.client)
 
+    // To test health indicators
+    testImplementation(mn.reactor.test)
+
     // Creates a dependency provider for graal (org.graalvm.nativeimage:svm)
     compileOnly(mn.graal.asProvider())
     runtimeOnly(mn.logback.classic)
@@ -270,6 +276,7 @@ dependencies {
     implementation(kotlin("reflect", kotlinVersion))
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // jte dependencies
     jteGenerate("gg.jte:jte-models:$jteVersion")

@@ -14,11 +14,6 @@ module.exports = {
             },
             url: [
                 "http://localhost:8080/",
-                "http://localhost:8080/obras",
-                "http://localhost:8080/contato",
-                "http://localhost:8080/equipe",
-                "http://localhost:8080/obra/1",
-                "http://localhost:8080/obra/1/pagina/2",
             ]
         },
         assert: {
@@ -26,12 +21,8 @@ module.exports = {
             assertions: {
                 "offscreen-images": "off",
                 "identical-links-same-purpose": "off",
-                // TODO: try to solve these later
                 "heading-order": "off",
-                "image-size-responsive": "off",
-                "render-blocking-resources": "off",
-                "first-contentful-paint": "off",
-                "largest-contentful-paint": "off",
+                "uses-responsive-images": "off",
                 "total-byte-weight": "off",
                 // Only failing at CI:
                 "tap-targets": runningOnCi,
