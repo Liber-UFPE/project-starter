@@ -1,15 +1,10 @@
 import br.ufpe.liber.tasks.GenerateAssetsMetadataTask
 import com.adarshr.gradle.testlogger.theme.ThemeType
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import com.github.gradle.node.npm.task.NpmTask
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
-import io.micronaut.gradle.docker.MicronautDockerfile
-import io.micronaut.gradle.docker.NativeImageDockerfile
 import java.lang.System.getenv
 import java.time.Duration
-import java.util.Optional
-import kotlin.jvm.optionals.getOrElse
 
 plugins {
     kotlin("jvm") version "1.9.22"
