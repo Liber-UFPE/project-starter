@@ -25,7 +25,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.7.5"
     // Code Inspections
     // https://detekt.dev/
-    id("io.gitlab.arturbosch.detekt") version "1.23.4"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
     // Task graph utility
     // https://github.com/dorongold/gradle-task-tree
     id("com.dorongold.task-tree") version "2.1.1"
@@ -46,7 +46,7 @@ plugins {
     id("com.saveourtool.diktat") version "2.0.0"
     // To run npm/node/js tasks
     // https://github.com/node-gradle/gradle-node-plugin
-    id("com.github.node-gradle.node") version "7.0.1"
+    id("com.github.node-gradle.node") version "7.0.2"
 }
 
 val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
