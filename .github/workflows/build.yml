@@ -2,12 +2,18 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    types: [ opened, synchronize, reopened ]
+    types: [ "opened", "synchronize", "reopened" ]
 
 env:
-  GRADLE_OPTS: "-Dorg.gradle.console=plain -Dorg.gradle.caching=true -Dkotlin.caching.enabled=true"
+  GRADLE_OPTS: '-Dorg.gradle.console=plain -Dorg.gradle.caching=true -Dsonar.gradle.skipCompile=true -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"'
+
+concurrency:
+  # This workflow cuts releases, so we want only a
+  # single concurrent workflow run per branch/tag/etc.
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   diktat:
@@ -34,7 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: detekt report
-        uses: natiginfo/action-detekt-all@1.23.4
+        uses: natiginfo/action-detekt-all@1.23.5
         with:
           args: |
             --report md:build/reports/detekt/detekt.md
@@ -93,27 +99,15 @@ jobs:
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
 
-  accessibility-test:
-    name: Tests / Accessibility
-    runs-on: ubuntu-latest
-    # Since this job is experimental
-    continue-on-error: true
-    needs:
-      - compile
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Gradle and Java
-        uses: ./.github/gradle-action
-      - name: Run Accessibility Tests
-        run: ./gradlew accessibilityTest
-      - name: Gradle Tasks Summary
-        run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
-
   esbuild-check:
     name: Test / Assets / pipeline
     runs-on: ubuntu-latest
     needs:
-      - compile
+      - diktat
+      - detekt
+      - ktlint
+      - stylelint
+      - eslint
     strategy:
       matrix:
         node-version: [18, 20]
@@ -137,54 +131,115 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - compile
+      - esbuild-check
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: Set up Gradle and Java
         uses: ./.github/gradle-action
       - name: Run tests
-        run: ./gradlew test
-      - name: Generate Kover Reports
-        run: ./gradlew koverHtmlReport koverXmlReport -x accessibilityTest
+        run: ./gradlew check koverXmlReport
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
-      - name: Setup Pandoc
-        uses: r-lib/actions/setup-pandoc@v2
-      - name: Output Kover summary
-        # Adapted from https://github.com/Kotlin/kotlinx-kover/issues/419#issuecomment-1632572084
-        run: |
-          pandoc build/reports/kover/html/index.html -f html -t gfm | \
-            sed -n '/# project-starter: Overall Coverage Summary/,/<\/div>/p' | \
-            grep -v "</div>" >> $GITHUB_STEP_SUMMARY
-      - name: Test Summary Report
-        uses: phoenix-actions/test-reporting@v12
-        if: always()
         with:
-          name: Kotest Report
-          path: "build/test-results/test/TEST-*.xml"
-          reporter: java-junit
-          output-to: "step-summary"
-          only-summary: "true"
+          verbose: true
 
-  build-docker:
-    name: Package / Docker / build
+  good-to-merge:
+    name: Good to merge
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    needs:
+      - test
+    steps:
+      - run: echo "This PR is ready to merge."
+
+  check-if-should-release:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    name: Check if should release
     runs-on: ubuntu-latest
     needs:
-      - compile
+      - test
+    # This job also has an output that can be used by downstream jobs.
+    # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    outputs:
+      tagName: ${{ steps.generateTagName.outputs.tagName }}
+    steps:
+      - run: echo "This is a push to main branch. Following with release a new version"
+      - name: Generate tag name
+        id: generateTagName
+        # TAG_NAME value is trying to emulate semver to avoid release ordering issues.
+        # See https://github.com/orgs/community/discussions/8226.
+        run: echo "tagName=v$(date '+%Y%m%d.%H%M.%S')" >> "$GITHUB_OUTPUT"
+
+  create-release:
+    name: Creates a GitHub Release
+    runs-on: ubuntu-latest
+    needs:
+      - test
+      - check-if-should-release
+    # Docs:
+    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
+    permissions:
+      contents: write
+      packages: read # to preserve default permissions
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG_NAME: ${{ needs.check-if-should-release.outputs.tagName }}
+      RELEASE_TITLE: Release ${{ needs.check-if-should-release.outputs.tagName }}
     steps:
       - uses: actions/checkout@v4
-      - name: Docker / Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Docker / Set up Buildx
-        uses: docker/setup-buildx-action@v3
+      - uses: ./.github/gradle-action
+      - name: Generate jar artifacts
+        run: ./gradlew -PreleaseTag=$TAG_NAME clean shadowJar -x test -x accessibilityTest --no-configuration-cache
+      - name: Create Github Release
+        run: gh release create "$TAG_NAME" --title "$RELEASE_TITLE" --generate-notes --latest ./build/libs/*.jar
+
+  publish-docker-image:
+    name: Publish docker image
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: ghcr.io
+      GH_TOKEN: ${{ github.token }}
+      TAG_NAME: ${{ needs.check-if-should-release.outputs.tagName }}
+    needs:
+      - test
+      - check-if-should-release
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 0 indicates all history for all branches and tags.
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
       - name: Docker / Get image name
         id: dockerImageName
-        run: echo "dockerImageName=hyginia:$(date '+%Y-%b-%d-%H%M%S')" >> "$GITHUB_OUTPUT"
-      - name: Docker / Create Image
-        run: docker image build -t ${{ steps.dockerImageName.outputs.dockerImageName }} .
-      - name: Docker / List images
-        run: docker images
+        run: |
+          echo "dockerImageName=${{ env.REGISTRY }}/${{ github.repository }}" | tr '[:upper:]' '[:lower:]'>> "$GITHUB_OUTPUT"
+      - name: Create Image
+        run: docker image build -t ${{ steps.dockerImageName.outputs.dockerImageName }}:latest .
+      # Needs to log in to use docker scout below
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: docker/scout-action@v1
+        continue-on-error: true
+        with:
+          command: quickview
+          image: ${{ steps.dockerImageName.outputs.dockerImageName }}
+          write-comment: false
+          summary: true
       # Adapted from https://docs.docker.com/build/ci/github-actions/test-before-push/
-      - name: Docker / Test Image
+      - name: Test Image
         # From `docker run --help`:
         #   -d, --detach          Run container in background and print container ID
         #   --rm                  Automatically remove the container when it exits
@@ -194,37 +249,24 @@ jobs:
           wget --retry-connrefused --tries=20 -nv --wait=1 --spider http://localhost:8080/
           docker container logs "$containerId"
           docker container stop "$containerId"
-
-  check-if-prod:
-    if: ${{ github.ref == 'refs/heads/main' }}
-    name: Check if prod
-    runs-on: ubuntu-latest
-    needs:
-      - compile
-    steps:
-      - run: echo "This is a push to main branch. Following with release and deploy"
-
-  create-release:
-    name: Creates a GitHub Release
-    runs-on: ubuntu-latest
-    concurrency:
-      group: "create-releases"
-      cancel-in-progress: true
-    needs:
-      - test
-      - check-if-prod
-      - build-docker
-    # Docs:
-    # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
-    permissions:
-      contents: write
-      packages: read # to preserve default permissions
-    steps:
-      - uses: actions/checkout@v4
-      - name: Create Github Release
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub Registry
         run: |
-          RELEASE_TITLE=$(date '+%Y %b %d %H:%M:%S')
-          TAG_NAME="v${{ github.run_number }}-$(git log HEAD -1 --pretty=format:'%h')"
-          gh release create "$TAG_NAME" --title "$RELEASE_TITLE" --generate-notes --latest
+          last_git_sha=$(git log --pretty=format:'%h' HEAD -1)
+          source_image_name=${{ steps.dockerImageName.outputs.dockerImageName }}
+
+          echo "Using git tag $TAG_NAME"
+          echo "Using last git sha $last_git_sha"
+          echo "Context's github.sha = ${{ github.sha }}"
+
+          echo "Images to tag => $source_image_name:$TAG_NAME"
+          echo "Images to tag => $source_image_name:$last_git_sha"
+          docker tag "$source_image_name" "$source_image_name:$TAG_NAME"
+          docker tag "$source_image_name" "$source_image_name:$last_git_sha"
+
+          docker push --all-tags ${{ steps.dockerImageName.outputs.dockerImageName }}
