@@ -148,8 +148,6 @@ jobs:
         run: ./gradlew check koverXmlReport
       - name: Gradle Tasks Summary
         run: cat build/reports/build-times.md >> $GITHUB_STEP_SUMMARY
-        with:
-          verbose: true
 
   good-to-merge:
     name: Good to merge
