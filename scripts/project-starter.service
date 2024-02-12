@@ -24,11 +24,11 @@ Environment="MICRONAUT_ENVIRONMENTS=baremetal"
 # MUST be consistent with what is defined in nginx proxy pass
 # location for this application.
 Environment="PROJECT_STARTER_PORT=8082"
-Environment="PROJECT_STARTER_PATH=/hyginia"
+Environment="PROJECT_STARTER_PATH=/project-starter"
 
 WorkingDirectory=/opt/javaapps
 # Valores apenas de exemplo, mas nos testes que fiz essa quantidade de memoria parecia suficiente.
-ExecStart=/usr/bin/java -Xms128m -Xmx256m -jar hyginia-all.jar
+ExecStart=/usr/bin/java -Xms128m -Xmx256m -jar project-starter-all.jar
 ExecStop=/bin/kill -15 $MAINPID
 
 [Install]
