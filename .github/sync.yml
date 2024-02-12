@@ -59,7 +59,7 @@ Liber-UFPE/hyginia:
   - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
   - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
   - src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
-  - src/test/kotlin/br/ufpe/liber/KteWriteableExtensions.kt
+  - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
   - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
   - src/test/resources/public/test-assets-metadata.json
   - src/main/jte/.jteroot
