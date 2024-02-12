@@ -1,0 +1,64 @@
+user/repository:
+  # dotfiles to sync
+  - .dockerignore
+  - .editorconfig
+  - .envrc
+  - .eslintrc.js
+  - .gitignore
+  - .npmrc
+  - .sdkmanrc
+  - .stylelintrc.json
+  # GitHub Actions workflows
+  - source: .github/workflows
+    destination: .github/workflows
+    exclude: |
+      repo-files-sync.yml
+  # GitHub Dependabot configuration
+  - .github/dependabot.yml
+  # Mergify configuration
+  - .github/mergify.yml
+  # Build files
+  - package.json
+  - assets-pipeline.mjs
+  - tailwind.config.js
+  - lighthouserc.js
+  - Dockerfile
+  - detekt-config.yml
+  - diktat-analysis.yml
+  - micronaut-cli.yml
+  # Build tasks
+  - buildSrc/build.gradle.kts
+  - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
+  # Shared source code
+  - src/accessibilityTest/kotlin/br/ufpe/liber
+  - src/main/kotlin/br/ufpe/liber/assets
+  - src/main/kotlin/br/ufpe/liber/pagination
+  - src/main/kotlin/br/ufpe/liber/Application.kt
+  - src/main/kotlin/br/ufpe/liber/EagerInProduction.kt
+  - src/main/kotlin/br/ufpe/liber/TemplatesFactory.kt
+  - src/main/kotlin/br/ufpe/liber/controllers/AssetsController.kt
+  - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
+  - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
+  - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
+  - src/main/kotlin/br/ufpe/liber/views
+  - src/main/resources/logback.xml
+  - src/main/resources/public/images
+  - src/test/kotlin/br/ufpe/liber/assets
+  - src/test/kotlin/br/ufpe/liber/pagination
+  - src/test/kotlin/br/ufpe/liber/views
+  - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
+  - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
+  - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
+  - src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
+  - src/test/kotlin/br/ufpe/liber/KteWriteableExtensions.kt
+  - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
+  - src/test/resources/public/test-assets-metadata.json
+  - src/main/jte/.jteroot
+  - src/main/jte/assets
+  - src/main/jte/partials
+  - src/main/jte/internalServerError.kte
+  - src/main/jte/notFound.kte
+  # Some scripts
+  - scripts/pre-commit
+  # Others
+  - LICENSE
