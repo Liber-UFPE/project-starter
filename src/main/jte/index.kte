@@ -10,4 +10,6 @@
             <p class="text-gray-800 leading-relaxed mb-4">Some more tesxt</p>
         </article>
     `)
+`, metadata = @`
+    <meta name="description" content="Project Starter Template">
 `)
