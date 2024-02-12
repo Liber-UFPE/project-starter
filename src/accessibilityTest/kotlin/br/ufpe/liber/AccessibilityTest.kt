@@ -1,5 +1,6 @@
 package br.ufpe.liber
 
+import br.ufpe.liber.assets.AssetsResolver
 import com.deque.html.axecore.selenium.AxeBuilder
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.data.forAll
@@ -43,8 +44,7 @@ class AccessibilityTest(
         .toList()
 
     beforeSpec {
-        // For possible initializations since the application will
-        // be tested from the users perspective.
+        context.getBean<AssetsResolver>()
     }
 
     // Called once per Spec, after all tests have completed for that spec.
