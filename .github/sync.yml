@@ -7,7 +7,7 @@ Liber-UFPE/hyginia:
   - .gitignore
   - .npmrc
   - .sdkmanrc
-  - .stylelintrc.json
+  - .stylelintrc.mjs
   # GitHub Actions workflows
   - source: .github/workflows
     destination: .github/workflows

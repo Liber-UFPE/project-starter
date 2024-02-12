@@ -7,6 +7,9 @@ import io.micronaut.http.client.HttpClient
 import io.micronaut.runtime.server.EmbeddedServer
 import io.micronaut.test.extensions.kotest5.annotation.MicronautTest
 
+// DO NOT EDIT: this file is automatically synced from the template repository
+// in https://github.com/Liber-UFPE/project-starter.
+
 @MicronautTest
 class ApplicationTest(
     private val server: EmbeddedServer,

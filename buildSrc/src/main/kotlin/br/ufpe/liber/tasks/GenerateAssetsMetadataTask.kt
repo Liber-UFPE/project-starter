@@ -23,6 +23,8 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
+// DO NOT EDIT: this file is automatically synced from the template repository
+// in https://github.com/Liber-UFPE/project-starter.
 @CacheableTask
 abstract class GenerateAssetsMetadataTask : DefaultTask() {
 
