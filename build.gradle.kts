@@ -12,12 +12,12 @@ plugins {
     kotlin("plugin.serialization") version "1.9.22"
     id("com.google.devtools.ksp") version "1.9.22-1.0.17"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.2.1"
+    id("io.micronaut.application") version "4.3.2"
     id("gg.jte.gradle") version "3.1.9"
-    id("io.micronaut.aot") version "4.2.1"
+    id("io.micronaut.aot") version "4.3.2"
     // Apply GraalVM Native Image plugin. Micronaut already adds it, but
     // adding it explicitly allows to control which version is used.
-    id("org.graalvm.buildtools.native") version "0.9.28"
+    id("org.graalvm.buildtools.native") version "0.10.0"
     // Provides better test output
     id("com.adarshr.test-logger") version "4.0.0"
     // Code Coverage:
@@ -25,7 +25,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover") version "0.7.5"
     // Code Inspections
     // https://detekt.dev/
-    id("io.gitlab.arturbosch.detekt") version "1.23.4"
+    id("io.gitlab.arturbosch.detekt") version "1.23.5"
     // Task graph utility
     // https://github.com/dorongold/gradle-task-tree
     id("com.dorongold.task-tree") version "2.1.1"
@@ -46,7 +46,7 @@ plugins {
     id("com.saveourtool.diktat") version "2.0.0"
     // To run npm/node/js tasks
     // https://github.com/node-gradle/gradle-node-plugin
-    id("com.github.node-gradle.node") version "7.0.1"
+    id("com.github.node-gradle.node") version "7.0.2"
 }
 
 val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
@@ -57,7 +57,8 @@ val kotlinVersion: String = properties["kotlinVersion"] as String
 val micronautVersion: String = properties["micronautVersion"] as String
 val jteVersion: String = properties["jteVersion"] as String
 
-version = "0.1"
+val releaseTag: String? by project
+version = releaseTag ?: "0.1"
 group = "br.ufpe.liber"
 
 repositories {
@@ -236,6 +237,8 @@ buildTimeTracker {
 // Install pre-commit git hooks to run ktlint and detekt
 // https://docs.gradle.org/current/userguide/working_with_files.html#sec:copying_single_file_example
 tasks.register<Copy>("installGitHooks") {
+    group = "setup"
+    description = "Install pre-commit git hooks"
     from(layout.projectDirectory.file("scripts/pre-commit"))
     into(layout.projectDirectory.dir(".git/hooks/"))
 }
@@ -252,7 +255,7 @@ tasks.named<DependencyUpdatesTask>("dependencyUpdates") {
 
 dependencies {
     // TEMP: Brings logback 1.4.14. Remove when micronaut-core updates.
-    implementation(platform("io.micronaut.logging:micronaut-logging-bom:1.2.2"))
+    implementation(platform("io.micronaut.logging:micronaut-logging-bom:1.2.3"))
 
     ksp(mn.micronaut.http.validation)
     ksp(mn.micronaut.serde.processor)
@@ -276,7 +279,6 @@ dependencies {
     implementation(kotlin("reflect", kotlinVersion))
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // jte dependencies
     jteGenerate("gg.jte:jte-models:$jteVersion")
