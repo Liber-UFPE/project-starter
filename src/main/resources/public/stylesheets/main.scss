@@ -1,58 +1,67 @@
 @use 'sass:color';
+@use 'sass:math';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-    .main-section-bg {
-        @apply bg-gradient-to-l from-sky-700 from-5% via-indigo-800 via-50% to-blue-700 to-95%;
+  .main-section-bg {
+    @apply bg-gradient-to-l from-sky-700 from-5% via-indigo-800 via-50% to-blue-700 to-95%;
+  }
+
+  mark {
+    @apply p-1 bg-amber-100 rounded font-semibold;
+  }
+
+  hover\:text-gray-100 {
+    &:hover {
+      @apply text-gray-100;
+    }
+  }
+
+  .footnotes {
+    hr {
+      @apply mt-4 pb-2;
+    }
+  }
+
+  .footnote-ref {
+    @apply bg-amber-200 py-0.5 px-1 rounded;
+
+    &:hover {
+      @apply underline bg-amber-300;
+    }
+  }
+
+  .footer-bg-color {
+    background-color: #1d4ed8;
+  }
+
+  .mt-icon {
+    margin-top: 0.4rem;
+  }
+
+  .mt-19 {
+    margin-top: 4.75rem;
+  }
+
+  .mt-22 {
+    @screen md {
+      margin-top: 5.5rem;
+    }
+  }
+
+  #brand-button.htmx-request {
+    animation: glow 0.7s infinite alternate;
+  }
+
+  @keyframes glow {
+    from {
+      box-shadow: 0 0 10px -10px #76a9fa;
     }
 
-    mark {
-        @apply p-1 bg-amber-100 rounded font-semibold;
+    to {
+      box-shadow: 0 0 10px 10px #76a9fa;
     }
-
-    hover\:text-gray-100 {
-        &:hover {
-            @apply text-gray-100;
-        }
-    }
-
-    .footnotes {
-        hr {
-            @apply mt-4 pb-2;
-        }
-    }
-
-    .footnote-ref {
-        @apply bg-amber-200 py-0.5 px-1 rounded;
-
-        &:hover {
-            @apply underline bg-amber-300;
-        }
-    }
-
-    .mt-19 {
-        margin-top: 4.75rem;
-    }
-
-    .mt-22 {
-        @screen md {
-            margin-top: 5.5rem;
-        }
-    }
-
-    #brand-button.htmx-request {
-        animation: glow 0.7s infinite alternate;
-    }
-
-    @keyframes glow {
-        from {
-            box-shadow: 0 0 10px -10px #76a9fa;
-        }
-
-        to {
-            box-shadow: 0 0 10px 10px #76a9fa;
-        }
-    }
+  }
 }
