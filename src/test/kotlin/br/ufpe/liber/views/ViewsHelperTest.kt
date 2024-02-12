@@ -144,6 +144,10 @@ class ViewsHelperTest : BehaviorSpec({
             then("there is nothing to render") {
                 ViewsHelper.emptyContent().asString() shouldBe ""
             }
+
+            then("it should be marked as emptyContent") {
+                ViewsHelper.emptyContent().isEmptyContent shouldBe true
+            }
         }
     }
 })
