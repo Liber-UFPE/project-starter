@@ -3,6 +3,9 @@ package br.ufpe.liber.views
 import io.micronaut.core.util.StringUtils
 import java.util.Optional
 
+// DO NOT EDIT: this file is automatically synced from the template repository
+// in https://github.com/Liber-UFPE/project-starter.
+
 object LinksHelper {
     const val UFPE: String = "https://ufpe.br/"
     const val HOLANDAEVOCE: String = "https://www.holandaevoce.nl/"

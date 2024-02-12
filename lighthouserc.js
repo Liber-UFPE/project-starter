@@ -1,5 +1,5 @@
-"use strict";
-
+// DO NOT EDIT: this file is automatically synced from the template repository
+// in https://github.com/Liber-UFPE/project-starter.
 const runningOnCi = process.env.CI === "true" ? "off" : "on";
 
 module.exports = {

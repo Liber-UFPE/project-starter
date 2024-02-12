@@ -17,6 +17,8 @@ import io.micronaut.web.router.Router
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 
+// DO NOT EDIT: this file is automatically synced from the template repository
+// in https://github.com/Liber-UFPE/project-starter.
 @MicronautTest
 class AccessibilityTest(
     private val server: EmbeddedServer,

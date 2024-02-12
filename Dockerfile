@@ -1,3 +1,5 @@
+# DO NOT EDIT: this file is automatically synced from the template repository
+# in https://github.com/Liber-UFPE/project-starter.
 FROM eclipse-temurin:21-jdk AS build
 
 # Install Node JS
