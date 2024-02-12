@@ -42,6 +42,7 @@ user/repository:
   - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
   - src/main/kotlin/br/ufpe/liber/views
   - src/main/resources/logback.xml
+  - src/main/resources/base.conf
   - src/main/resources/public/images
   - src/test/kotlin/br/ufpe/liber/assets
   - src/test/kotlin/br/ufpe/liber/pagination
