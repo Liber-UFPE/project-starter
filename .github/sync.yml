@@ -1,4 +1,4 @@
-user/repository:
+Liber-UFPE/hyginia:
   # dotfiles to sync
   - .dockerignore
   - .editorconfig
