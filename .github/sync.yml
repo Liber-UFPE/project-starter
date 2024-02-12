@@ -21,8 +21,10 @@ Liber-UFPE/hyginia:
   - package.json
   - assets-pipeline.mjs
   - tailwind.config.js
-  - lighthouserc.js
-  - Dockerfile
+  - source: lighthouserc.js
+    replace: false
+  - source: Dockerfile
+    replace: false
   - detekt-config.yml
   - diktat-analysis.yml
   - micronaut-cli.yml
@@ -30,7 +32,8 @@ Liber-UFPE/hyginia:
   - buildSrc/build.gradle.kts
   - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
   # Shared source code
-  - src/accessibilityTest/kotlin/br/ufpe/liber
+  - source: src/accessibilityTest/kotlin/br/ufpe/liber
+    replace: false
   - src/main/kotlin/br/ufpe/liber/assets
   - src/main/kotlin/br/ufpe/liber/pagination
   - src/main/kotlin/br/ufpe/liber/Application.kt
@@ -40,13 +43,18 @@ Liber-UFPE/hyginia:
   - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
   - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
   - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
-  - src/main/kotlin/br/ufpe/liber/views
+  - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
+  - src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
+  - source: src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
+    replace: false
   - src/main/resources/logback.xml
   - src/main/resources/base.conf
   - src/main/resources/public/images
   - src/test/kotlin/br/ufpe/liber/assets
   - src/test/kotlin/br/ufpe/liber/pagination
-  - src/test/kotlin/br/ufpe/liber/views
+  - src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
+  - source: src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
+    replace: false
   - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
   - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
   - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
