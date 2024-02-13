@@ -44,16 +44,16 @@ Liber-UFPE/hyginia:
   - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
   - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
   - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
-  - src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
-  - source: src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
+  - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
+  - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
     replace: false
   - src/main/resources/logback.xml
   - src/main/resources/base.conf
   - src/main/resources/public/images
   - src/test/kotlin/br/ufpe/liber/assets
   - src/test/kotlin/br/ufpe/liber/pagination
-  - src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
-  - source: src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
+  - src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
+  - source: src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
     replace: false
   - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
   - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
