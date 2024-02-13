@@ -1,6 +1,6 @@
 # DO NOT EDIT: this file is automatically synced from the template repository
 # in https://github.com/Liber-UFPE/project-starter.
-FROM eclipse-temurin:21-jdk AS build
+FROM eclipse-temurin:21.0.2_13-jdk AS build
 
 # Install Node JS
 RUN apt-get update -y && apt-get install curl -y \
@@ -16,7 +16,7 @@ RUN npm install \
     && ./gradlew clean shadowJar -x test -x accessibilityTest --console plain --no-configuration-cache \
     && mv -vf build/libs/*.jar app.jar
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21.0.2_13-jre-alpine
 
 LABEL org.opencontainers.image.description="Project Starter Java Application Service"
 LABEL org.opencontainers.image.url="https://github.com/Liber-UFPE/project-starter/"
