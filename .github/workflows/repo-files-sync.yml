@@ -13,17 +13,22 @@ jobs:
     steps:
       - uses: WcAServices/markdown-template-action@v1
         with:
+          # language="shell script"
+          variables: >-
+            COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
+            SHORT_SHA="${COMMIT_SHA:0:7}"
+          # language="markdown"
           template: |
             ## Workflow Run Summary
-            | Field                    | Value |
-            |:-------------------------|:------|
-            | Workflow                 | ${{ github.event.workflow_run.workflow.name }} #${{ github.event.workflow_run.run_number }} |
-            | Conclusion               | ${{ github.event.workflow_run.conclusion }}                                                 |
-            | Actor                    | ${{ github.event.workflow_run.actor.html_url }}                                             |
-            | Workflow Run ID          | [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})            |
-            | Workflow Run Created At  | ${{ github.event.workflow_run.created_at }}                                                 |
-            | Workflow Run Updated At  | ${{ github.event.workflow_run.updated_at }}                                                 |
-            | Workflow Run Head SHA    | ${{ github.event.workflow_run.head_sha }}                                                   |
+            | Field                   | Value                                                                                       |
+            |:------------------------|:--------------------------------------------------------------------------------------------|
+            | Workflow                | ${{ github.event.workflow_run.workflow.name }} #${{ github.event.workflow_run.run_number }} |
+            | Conclusion              | ${{ github.event.workflow_run.conclusion }}                                                 |
+            | Actor                   | ${{ github.event.workflow_run.actor.html_url }}                                             |
+            | Workflow Run ID         | [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})            |
+            | Workflow Run Created At | ${{ github.event.workflow_run.created_at }}                                                 |
+            | Workflow Run Updated At | ${{ github.event.workflow_run.updated_at }}                                                 |
+            | Workflow Run Head SHA   | [`$SHORT_SHA`]($COMMIT_SHA)                                                                 |
 
   sync:
     runs-on: ubuntu-latest
