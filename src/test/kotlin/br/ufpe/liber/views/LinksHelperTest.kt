@@ -9,9 +9,6 @@ import io.kotest.extensions.system.withEnvironment
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 
-// DO NOT EDIT: this file is automatically synced from the template repository
-// in https://github.com/Liber-UFPE/project-starter.
-
 class LinksHelperTest : BehaviorSpec({
     given("LinksHelper") {
         `when`(".Liber.link") {
