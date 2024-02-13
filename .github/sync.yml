@@ -1,157 +1,161 @@
-Liber-UFPE/visaoholandesa:
-  - # dotfiles to sync
-  - .dockerignore
-  - .editorconfig
-  - .envrc
-  - .eslintrc.js
-  - .gitignore
-  - .npmrc
-  - .sdkmanrc
-  - .stylelintrc.mjs
-  # GitHub Actions workflows
-  - source: .github/workflows
-    destination: .github/workflows
-    exclude: |
-      repo-files-sync.yml
-  # Renovate bot configuration
-  - .github/renovate.json5
-  # Mergify configuration
-  - .github/mergify.yml
-  # Build files
-  - package.json
-  - assets-pipeline.mjs
-  - source: lighthouserc.js
-    replace: false
-  - source: Dockerfile
-    replace: false
-  - detekt-config.yml
-  - diktat-analysis.yml
-  - micronaut-cli.yml
-  # Build tasks
-  - buildSrc/build.gradle.kts
-  - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
-  # Shared source code
-  - source: src/accessibilityTest/kotlin/br/ufpe/liber
-    replace: false
-  - src/main/kotlin/br/ufpe/liber/assets
-  - src/main/kotlin/br/ufpe/liber/pagination
-  - src/main/kotlin/br/ufpe/liber/Application.kt
-  - src/main/kotlin/br/ufpe/liber/EagerInProduction.kt
-  - src/main/kotlin/br/ufpe/liber/TemplatesFactory.kt
-  - src/main/kotlin/br/ufpe/liber/controllers/AssetsController.kt
-  - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
-  - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
-  - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
-  - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
-  - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
-  - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
-    replace: false
-  - src/main/resources/logback.xml
-  - src/main/resources/base.conf
-  - src/main/resources/public/images
-  - src/test/kotlin/br/ufpe/liber/assets
-  - src/test/kotlin/br/ufpe/liber/pagination
-  - src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
-  - source: src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
-    replace: false
-  - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
-  - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
-  - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
-  - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
-    replace: false
-  - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
-  - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
-  - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
-  - src/test/resources/public/test-assets-metadata.json
-  - src/main/jte/.jteroot
-  - src/main/jte/assets
-  # Some scripts
-  - scripts/pre-commit
-  # Others
-  - LICENSE
-
 group:
-  repos: |
-    Liber-UFPE/hyginia
-    Liber-UFPE/pereira-da-costa
-  files:
-    # dotfiles to sync
-    - .dockerignore
-    - .editorconfig
-    - .envrc
-    - .eslintrc.js
-    - .gitignore
-    - .npmrc
-    - .sdkmanrc
-    - .stylelintrc.mjs
-    # GitHub Actions workflows
-    - source: .github/workflows
-      destination: .github/workflows
-      exclude: |
-        repo-files-sync.yml
-    # Renovate bot configuration
-    - .github/renovate.json5
-    # Mergify configuration
-    - .github/mergify.yml
-    # Build files
-    - package.json
-    - assets-pipeline.mjs
-    - tailwind.config.js
-    - source: lighthouserc.js
-      replace: false
-    - source: Dockerfile
-      replace: false
-    - detekt-config.yml
-    - diktat-analysis.yml
-    - micronaut-cli.yml
-    # Build tasks
-    - buildSrc/build.gradle.kts
-    - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
-    # Shared source code
-    - source: src/accessibilityTest/kotlin/br/ufpe/liber
-      replace: false
-    - src/main/kotlin/br/ufpe/liber/assets
-    - src/main/kotlin/br/ufpe/liber/pagination
-    - src/main/kotlin/br/ufpe/liber/Application.kt
-    - src/main/kotlin/br/ufpe/liber/EagerInProduction.kt
-    - src/main/kotlin/br/ufpe/liber/TemplatesFactory.kt
-    - src/main/kotlin/br/ufpe/liber/controllers/AssetsController.kt
-    - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
-    - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
-    - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
-    - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
-    - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
-    - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
-      replace: false
-    - src/main/resources/logback.xml
-    - src/main/resources/base.conf
-    - src/main/resources/public/images
-    - src/test/kotlin/br/ufpe/liber/assets
-    - src/test/kotlin/br/ufpe/liber/pagination
-    - src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
-    - source: src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
-      replace: false
-    - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
-    - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
-    - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
-    - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
-      replace: false
-    - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
-    - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
-    - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
-    - src/test/resources/public/test-assets-metadata.json
-    - src/main/jte/.jteroot
-    - src/main/jte/assets
-    - src/main/jte/partials/content-section.kte
-    - src/main/jte/partials/error.kte
-    - src/main/jte/partials/main-section.kte
-    - source: src/main/jte/partials/pagination.kte
-      replace: false
-    - source: src/main/jte/partials/navlink.kte
-      replace: false
-    - src/main/jte/internalServerError.kte
-    - src/main/jte/notFound.kte
-    # Some scripts
-    - scripts/pre-commit
-    # Others
-    - LICENSE
+  # Using Bootstrap 5
+  - files:
+      - # dotfiles to sync
+      - .dockerignore
+      - .editorconfig
+      - .envrc
+      - .eslintrc.js
+      - .gitignore
+      - .npmrc
+      - .sdkmanrc
+      - .stylelintrc.mjs
+      # GitHub Actions workflows
+      - source: .github/workflows
+        destination: .github/workflows
+        exclude: |
+          repo-files-sync.yml
+      # Renovate bot configuration
+      - .github/renovate.json5
+      # Mergify configuration
+      - .github/mergify.yml
+      # Build files
+      - package.json
+      - assets-pipeline.mjs
+      - source: lighthouserc.js
+        replace: false
+      - source: Dockerfile
+        replace: false
+      - detekt-config.yml
+      - diktat-analysis.yml
+      - micronaut-cli.yml
+      # Build tasks
+      - buildSrc/build.gradle.kts
+      - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
+      # Shared source code
+      - source: src/accessibilityTest/kotlin/br/ufpe/liber
+        replace: false
+      - src/main/kotlin/br/ufpe/liber/assets
+      - src/main/kotlin/br/ufpe/liber/pagination
+      - src/main/kotlin/br/ufpe/liber/Application.kt
+      - src/main/kotlin/br/ufpe/liber/EagerInProduction.kt
+      - src/main/kotlin/br/ufpe/liber/TemplatesFactory.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/AssetsController.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
+      - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
+      - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
+      - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
+        replace: false
+      - src/main/resources/logback.xml
+      - src/main/resources/base.conf
+      - src/main/resources/public/images
+      - src/test/kotlin/br/ufpe/liber/assets
+      - src/test/kotlin/br/ufpe/liber/pagination
+      - src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
+      - source: src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
+        replace: false
+      - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
+      - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
+      - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
+      - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
+        replace: false
+      - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
+      - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
+      - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
+      - src/test/resources/public/test-assets-metadata.json
+      - src/main/jte/.jteroot
+      - src/main/jte/assets
+      # Some scripts
+      - scripts/pre-commit
+      # Others
+      - LICENSE
+    repos: |
+      Liber-UFPE/visaoholandesa
+
+  # Using Tailwind CSS
+  - files:
+      # dotfiles to sync
+      - .dockerignore
+      - .editorconfig
+      - .envrc
+      - .eslintrc.js
+      - .gitignore
+      - .npmrc
+      - .sdkmanrc
+      - .stylelintrc.mjs
+      # GitHub Actions workflows
+      - source: .github/workflows
+        destination: .github/workflows
+        exclude: |
+          repo-files-sync.yml
+      # Renovate bot configuration
+      - .github/renovate.json5
+      # Mergify configuration
+      - .github/mergify.yml
+      # Build files
+      - package.json
+      - assets-pipeline.mjs
+      - tailwind.config.js
+      - source: lighthouserc.js
+        replace: false
+      - source: Dockerfile
+        replace: false
+      - detekt-config.yml
+      - diktat-analysis.yml
+      - micronaut-cli.yml
+      # Build tasks
+      - buildSrc/build.gradle.kts
+      - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
+      # Shared source code
+      - source: src/accessibilityTest/kotlin/br/ufpe/liber
+        replace: false
+      - src/main/kotlin/br/ufpe/liber/assets
+      - src/main/kotlin/br/ufpe/liber/pagination
+      - src/main/kotlin/br/ufpe/liber/Application.kt
+      - src/main/kotlin/br/ufpe/liber/EagerInProduction.kt
+      - src/main/kotlin/br/ufpe/liber/TemplatesFactory.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/AssetsController.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
+      - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
+      - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
+      - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
+        replace: false
+      - src/main/resources/logback.xml
+      - src/main/resources/base.conf
+      - src/main/resources/public/images
+      - src/test/kotlin/br/ufpe/liber/assets
+      - src/test/kotlin/br/ufpe/liber/pagination
+      - src/test/kotlin/br/ufpe/liber/views/ViewsHelperTest.kt
+      - source: src/test/kotlin/br/ufpe/liber/views/LinksHelperTest.kt
+        replace: false
+      - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
+      - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
+      - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
+      - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
+        replace: false
+      - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
+      - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
+      - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
+      - src/test/resources/public/test-assets-metadata.json
+      - src/main/jte/.jteroot
+      - src/main/jte/assets
+      - src/main/jte/partials/content-section.kte
+      - src/main/jte/partials/error.kte
+      - src/main/jte/partials/main-section.kte
+      - source: src/main/jte/partials/pagination.kte
+        replace: false
+      - source: src/main/jte/partials/navlink.kte
+        replace: false
+      - src/main/jte/internalServerError.kte
+      - src/main/jte/notFound.kte
+      # Some scripts
+      - scripts/pre-commit
+      # Others
+      - LICENSE
+    repos: |
+      Liber-UFPE/hyginia
+      Liber-UFPE/pereira-da-costa
