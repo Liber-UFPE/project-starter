@@ -18,7 +18,7 @@ group:
       exclude: |
         repo-files-sync.yml
     # Renovate bot configuration
-    - renovate.json
+    - .github/renovate.json5
     # Mergify configuration
     - .github/mergify.yml
     # Build files
