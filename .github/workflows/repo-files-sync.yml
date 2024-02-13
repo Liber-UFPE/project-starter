@@ -19,7 +19,7 @@ jobs:
             |:-------------------------|:------|
             | Workflow                 | ${{ github.event.workflow_run.workflow.name }} #${{ github.event.workflow_run.run_number }} |
             | Conclusion               | ${{ github.event.workflow_run.conclusion }}                                                 |
-            | Actor                    | [${{ github.event.workflow_run.sender }}](${{ github.event.workflow_run.actor.html_url }})  |
+            | Actor                    | ${{ github.event.workflow_run.actor.html_url }}                                             |
             | Workflow Run ID          | [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})            |
             | Workflow Run URL         | ${{ github.event.workflow_run.url }}                                                        |
             | Workflow Run Created At  | ${{ github.event.workflow_run.created_at }}                                                 |
