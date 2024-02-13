@@ -1,14 +1,15 @@
 name: Sync Files
 
 on:
-  push:
-    branches: [ "main" ]
-  release:
-    types: [ "created", "published" ]
+  workflow_run:
+    types: [ completed ]
+    workflows: [ CI ]
+    branches: [ main ]
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
