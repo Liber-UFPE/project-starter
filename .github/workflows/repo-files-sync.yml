@@ -7,6 +7,23 @@ on:
     branches: [ main ]
 
 jobs:
+  summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Workflow trigger summary
+        run: |
+            echo "## Workflow Run Summary"
+            echo ""
+            echo "| Field                    | Value |" >> $GITHUB_OUTPUT
+            echo "|:-------------------------|:------|" >> $GITHUB_OUTPUT
+            echo "| Workflow                 | ${{ github.event.workflow_run.workflow.name }} #${{ github.event.workflow_run.run_number }}    |" >> $GITHUB_OUTPUT
+            echo "| Conclusion               | ${{ github.event.workflow_run.conclusion }}                                                    |" >> $GITHUB_OUTPUT
+            echo "| Actor                    | [${{ github.event.workflow_run.actor.name }}](${{ github.event.workflow_run.actor.html_url }}) |" >> $GITHUB_OUTPUT
+            echo "| Workflow Run ID          | [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }})               |" >> $GITHUB_OUTPUT
+            echo "| Workflow Run URL         | ${{ github.event.workflow_run.url }}                                                           |" >> $GITHUB_OUTPUT
+            echo "| Workflow Run Created At  | ${{ github.event.workflow_run.created_at }}                                                    |" >> $GITHUB_OUTPUT
+            echo "| Workflow Run Updated At  | ${{ github.event.workflow_run.updated_at }}                                                    |" >> $GITHUB_OUTPUT
+            echo "| Workflow Run Head Commit | ${{ github.event.workflow_run.head_commit }}                                                   |" >> $GITHUB_OUTPUT
   sync:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -14,7 +31,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Run GitHub File Sync
-        uses: Liber-UFPE/repo-file-sync-action@v1.22.0
+        uses: Liber-UFPE/repo-file-sync-action@v1.22.1
         with:
           GH_PAT: ${{ secrets.REPO_SYNC_PAT }}
           COMMIT_EACH_FILE: false # Commit all files at once
