@@ -58,7 +58,8 @@ Liber-UFPE/hyginia:
   - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
   - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
   - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
-  - src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
+  - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
+    replace: false
   - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
   - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
   - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
