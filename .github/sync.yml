@@ -17,8 +17,8 @@ group:
       destination: .github/workflows
       exclude: |
         repo-files-sync.yml
-    # GitHub Dependabot configuration
-    - .github/dependabot.yml
+    # Renovate bot configuration
+    - renovate.json
     # Mergify configuration
     - .github/mergify.yml
     # Build files
