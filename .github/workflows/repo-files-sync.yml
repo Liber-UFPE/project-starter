@@ -8,10 +8,10 @@ on:
 
 jobs:
   summary:
+    name: Workflow Run information
     runs-on: ubuntu-latest
     steps:
-      - name: Workflow information
-        uses: WcAServices/markdown-template-action@v1
+      - uses: WcAServices/markdown-template-action@v1
         with:
           template: |
             ## Workflow Run Summary
