@@ -70,7 +70,13 @@ group:
     - src/test/resources/public/test-assets-metadata.json
     - src/main/jte/.jteroot
     - src/main/jte/assets
-    - src/main/jte/partials
+    - src/main/jte/partials/content-section.kte
+    - src/main/jte/partials/error.kte
+    - src/main/jte/partials/main-section.kte
+    - source: src/main/jte/partials/pagination.kte
+      replace: false
+    - source: src/main/jte/partials/navlink.kte
+      replace: false
     - src/main/jte/internalServerError.kte
     - src/main/jte/notFound.kte
     # Some scripts
