@@ -185,6 +185,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          load: true  # Load is a shorthand for --output=type=docker
           tags: ${{ steps.dockerImageName.outputs.dockerImageName }}:latest
           # See https://docs.docker.com/build/ci/github-actions/cache/#github-cache
           cache-from: type=gha
