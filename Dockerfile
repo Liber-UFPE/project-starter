@@ -1,6 +1,6 @@
 # DO NOT EDIT: this file is automatically synced from the template repository
 # in https://github.com/Liber-UFPE/project-starter.
-FROM eclipse-temurin:21.0.2_13-jdk AS build
+FROM gradle:8.6.0-jdk21 AS build
 
 # Install Node JS
 RUN apt-get update -y && apt-get install curl -y \
@@ -13,7 +13,7 @@ WORKDIR /app
 
 # Build application
 RUN npm install \
-    && ./gradlew clean shadowJar -x test -x accessibilityTest --console plain --no-configuration-cache \
+    && gradle clean shadowJar -x test -x accessibilityTest --console plain --no-configuration-cache \
     && mv -vf build/libs/*.jar app.jar
 
 FROM eclipse-temurin:21.0.2_13-jre-alpine
