@@ -1,10 +1,13 @@
+---
 name: Sync Files
 
+# yamllint disable rule:truthy
 on:
   workflow_run:
     types: [ completed ]
     workflows: [ CI ]
     branches: [ main ]
+# yamllint enable rule:truthy
 
 jobs:
   summary:
@@ -17,6 +20,7 @@ jobs:
           variables: >-
             COMMIT_SHA="${{ github.event.workflow_run.head_sha }}"
             SHORT_SHA="${COMMIT_SHA:0:7}"
+          # yamllint disable rule:line-length
           # language="markdown"
           template: |
             ## Workflow Run Summary
@@ -29,6 +33,7 @@ jobs:
             | Workflow Run Created At | ${{ github.event.workflow_run.created_at }}                                                 |
             | Workflow Run Updated At | ${{ github.event.workflow_run.updated_at }}                                                 |
             | Workflow Run Head SHA   | [`$SHORT_SHA`]($COMMIT_SHA)                                                                 |
+          # yamllint enable rule:line-length
 
   sync:
     runs-on: ubuntu-latest
@@ -37,7 +42,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Run GitHub File Sync
-        uses: BetaHuhn/repo-file-sync-action@v1.21.0
+        uses: Liber-UFPE/repo-file-sync-action@v1.22.1
         with:
           GH_PAT: ${{ secrets.REPO_SYNC_PAT }}
-          COMMIT_EACH_FILE: false # Commit all files at once
+          COMMIT_EACH_FILE: false  # Commit all files at once

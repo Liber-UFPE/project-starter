@@ -1,7 +1,8 @@
+---
 group:
   # Using Bootstrap 5
   - files:
-      - # dotfiles to sync
+      # dotfiles to sync
       - .dockerignore
       - .editorconfig
       - .envrc
