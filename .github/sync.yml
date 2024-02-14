@@ -29,7 +29,8 @@ group:
       - diktat-analysis.yml
       - micronaut-cli.yml
       # Build tasks
-      - buildSrc/build.gradle.kts
+      - source: buildSrc/build.gradle.kts
+        replace: false
       - buildSrc/src/main/kotlin/br/ufpe/liber/tasks
       # Shared source code
       - source: src/accessibilityTest/kotlin/br/ufpe/liber
