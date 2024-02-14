@@ -290,13 +290,15 @@ jobs:
         run: |
           pwd
           ls -l
+          ls -l artifact
           pushd "$GITHUB_WORKSPACE"
             pwd
             ls -l
           popd
-          if [ -f generate-image-latest.tar.gz ]; then
+          artifact_file="artifact/generate-image-latest.tar.gz"
+          if [ -f "$artifact_file" ]; then
             echo "Previously generate image found. Will load image"
-            docker load < generate-image-latest.tar.gz
+            docker load < "$artifact_file"
           else
             echo "Previously generate image NOT found. Will build image"
             docker image build -t ${{ steps.dockerImageName.outputs.dockerImageName }}:latest .

@@ -1,0 +1,12 @@
+---
+extends: default
+
+ignore: |
+  node_modules
+
+rules:
+  line-length:
+    max: 120
+
+  # GitHub Action uses {{ }} for its expressions.
+  brackets: disable
