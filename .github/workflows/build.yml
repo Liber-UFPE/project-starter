@@ -12,6 +12,7 @@ on:
 # yamllint enable rule:truthy
 
 env:
+  REGISTRY: ghcr.io
   GRADLE_OPTS: >
     -Dorg.gradle.console=plain
     -Dorg.gradle.caching=true
@@ -262,7 +263,6 @@ jobs:
     name: Publish docker image
     runs-on: ubuntu-latest
     env:
-      REGISTRY: ghcr.io
       GH_TOKEN: ${{ github.token }}
       TAG_NAME: ${{ needs.generate-tag-name.outputs.tagName }}
     needs:
