@@ -42,7 +42,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Run GitHub File Sync
-        uses: Liber-UFPE/repo-file-sync-action@v1.22.1
+        uses: Liber-UFPE/repo-file-sync-action@v1.22.2
         with:
           GH_PAT: ${{ secrets.REPO_SYNC_PAT }}
           COMMIT_EACH_FILE: false  # Commit all files at once
