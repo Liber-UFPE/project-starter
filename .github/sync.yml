@@ -20,8 +20,6 @@ group:
       # Mergify configuration
       - .github/mergify.yml
       # Build files
-      - package.json
-      - assets-pipeline.mjs
       - source: lighthouserc.js
         replace: false
       - source: Dockerfile
