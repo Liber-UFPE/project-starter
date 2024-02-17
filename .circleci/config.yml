@@ -301,6 +301,11 @@ jobs:
           command: |
             docker build --progress plain -t "$DOCKER_PROJECT_NAME:latest" .
       - run:
+          name: List docker images
+          # language="shell script"
+          command: |
+            docker image ls --all
+      - run:
           name: Test Docker image
           # language="shell script"
           command : |
