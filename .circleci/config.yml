@@ -306,6 +306,11 @@ jobs:
           command: |
             docker image ls --all --digests
       - run:
+          name: Inspect all docker images
+          # language="shell script"
+          command: |
+            docker image list --format '{{ .ID }}' | sort | uniq | xargs -I {} docker inspect {}
+      - run:
           name: Test Docker image
           # language="shell script"
           command : |
