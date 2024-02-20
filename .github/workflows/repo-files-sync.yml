@@ -46,3 +46,5 @@ jobs:
         with:
           GH_PAT: ${{ secrets.REPO_SYNC_PAT }}
           COMMIT_EACH_FILE: false  # Commit all files at once
+          PR_LABELS: |
+            file-sync
