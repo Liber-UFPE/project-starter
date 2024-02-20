@@ -13,7 +13,9 @@ pull_request_rules:
   - name: Automatic merge from renovate
     conditions:
       - check-success=Good to merge
-      - author=renovate[bot]
+      - or:
+          - author=renovate[bot]
+          - label=file-sync
     actions:
       queue:
         name: deps-update
