@@ -1,8 +1,7 @@
 version: 2.1
 
 orbs:
-  # https://circleci.com/developer/orbs/orb/idanelh/ktlint
-  ktlint: marcospereira/kotlin-ktlint-orb@0.0.1
+  ktlint: marcospereira/kotlin-ktlint-orb@0.0.2
   node: circleci/node@5.2.0
 
 executors:
