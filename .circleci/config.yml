@@ -148,10 +148,13 @@ jobs:
     steps:
       - attach_checkout_workspace
       - ktlint/install:
+          version: "1.1.0"
           verbose: true
       - run:
           name: Run ktlint
-          command: ktlint --relative --reporter=plain --color --log-level=debug
+          command: |
+            ktlint --version
+            ktlint --relative --reporter=plain --color --log-level=debug
 
   detekt:
     docker:
