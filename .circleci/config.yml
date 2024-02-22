@@ -151,7 +151,7 @@ jobs:
           verbose: true
       - run:
           name: Run ktlint
-          command: ktlint --relative --reporter=plain --color
+          command: ktlint --relative --reporter=plain --color --log-level=debug
 
   detekt:
     docker:
