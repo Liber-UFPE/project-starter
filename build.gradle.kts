@@ -1,7 +1,7 @@
 import br.ufpe.liber.tasks.GenerateAssetsMetadataTask
 import com.adarshr.gradle.testlogger.theme.ThemeType
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
-import com.github.gradle.node.npm.task.NpmTask
+import com.lordcodes.turtle.shellRun
 import io.github.vacxe.buildtimetracker.reporters.markdown.MarkdownConfiguration
 import java.lang.System.getenv
 import java.time.Duration
@@ -47,9 +47,9 @@ plugins {
     // Add diktat
     // https://github.com/marcospereira/diktat
     id("com.saveourtool.diktat") version "2.0.0"
-    // To run npm/node/js tasks
-    // https://github.com/node-gradle/gradle-node-plugin
-    id("com.github.node-gradle.node") version "7.0.2"
+    // To buil the app ui frontend
+    // https://siouan.github.io/frontend-gradle-plugin/
+    id("org.siouan.frontend-jdk17") version "8.0.0"
 }
 
 val runningOnCI: Boolean = getenv().getOrDefault("CI", "false").toBoolean()
@@ -165,28 +165,45 @@ tasks.named<Test>("test") {
 /* -------------------------------- */
 /* Start: Node/assets configuration */
 /* -------------------------------- */
-node {
-    version = "18.19.0"
-    download = false
+val getNodeExecutable = try {
+    Result.success(
+        shellRun {
+            files.which("node") ?: error("Node.js is not installed or not in the path.")
+        },
+    )
+} catch (e: IllegalStateException) {
+    Result.failure<Exception>(e)
+}
+
+frontend {
+    nodeVersion = "18.19.0"
+    // The plugin will NOT try to download Node.js.
+    nodeDistributionProvided = getNodeExecutable.isSuccess
+    verboseModeEnabled = true
+    assembleScript = "run build"
+    nodeInstallDirectory = getNodeExecutable
+        .map { file(it).parentFile.parentFile }
+        .getOrElse {
+            println("Could not find Node.js executable. ${it.message}")
+            file(".gradle/nodejs")
+        }
 }
 
 tasks {
-    val npmAssetsPipeline by registering(NpmTask::class) {
-        group = "Assets"
-        description = "Executes assets pipeline using npm"
+    named("installFrontend") {
+        inputs.files("package.json", "yarn.lock")
+        outputs.dir("node_modules")
+    }
 
+    val npmAssetsPipeline by named("assembleFrontend") {
         inputs.files(fileTree(layout.projectDirectory.dir("src/main/resources")))
-        args = listOf("run", "assetsPipeline")
         outputs.files(fileTree(layout.buildDirectory.dir("resources/main/public")))
-
-        dependsOn("npmInstall")
     }
 
     val generateMetafile by registering(GenerateAssetsMetadataTask::class) {
         group = "Assets"
         description = "Generate assets metadata file"
         assetsDirectory = layout.buildDirectory.dir("resources/main/public/")
-
         dependsOn(npmAssetsPipeline)
     }
 
@@ -350,8 +367,8 @@ dependencies {
     implementation("gg.jte:jte-kotlin:$jteVersion")
 
     // Accessibility Tests
+    // Manually adding commons-compress due to https://devhub.checkmarx.com/cve-details/CVE-2024-26308/
+    accessibilityTestImplementation("org.apache.commons:commons-compress:1.26.0")
     accessibilityTestImplementation("org.seleniumhq.selenium:selenium-java:4.18.1")
     accessibilityTestImplementation("com.deque.html.axe-core:selenium:4.8.2")
 }
-
-apply(from = "application.gradle.kts")
