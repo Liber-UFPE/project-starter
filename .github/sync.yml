@@ -11,8 +11,6 @@ group:
       - .yarnrc.yml
       - .sdkmanrc
       - .stylelintrc.mjs
-      # CircleCI configuration
-      - .circleci/config.yml
       # GitHub Actions workflows
       - source: .github/workflows
         destination: .github/workflows
@@ -87,8 +85,6 @@ group:
       - .yarnrc.yml
       - .sdkmanrc
       - .stylelintrc.mjs
-      # CircleCI configuration
-      - .circleci/config.yml
       # GitHub Actions workflows
       - source: .github/workflows
         destination: .github/workflows
