@@ -95,9 +95,9 @@ group:
       # Mergify configuration
       - .github/mergify.yml
       # Build files
-      - package.json:
+      - source: package.json
         replace: false
-      - assets-pipeline.mjs:
+      - source: assets-pipeline.mjs
         replace: false
       - tailwind.config.js
       - source: lighthouserc.js
