@@ -6,11 +6,11 @@ group:
       - .dockerignore
       - .editorconfig
       - .envrc
-      - .eslintrc.js
       - .gitignore
       - .yarnrc.yml
       - .sdkmanrc
       - .stylelintrc.mjs
+      - eslint.config.mjs
       # GitHub Actions workflows
       - source: .github/workflows
         destination: .github/workflows
@@ -81,11 +81,12 @@ group:
       - .dockerignore
       - .editorconfig
       - .envrc
-      - .eslintrc.js
+
       - .gitignore
       - .yarnrc.yml
       - .sdkmanrc
       - .stylelintrc.mjs
+      - eslint.config.mjs
       # GitHub Actions workflows
       - source: .github/workflows
         destination: .github/workflows
