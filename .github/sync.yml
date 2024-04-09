@@ -17,7 +17,8 @@ group:
         exclude: |
           repo-files-sync.yml
       # Renovate bot configuration
-      - .github/renovate.json5
+      - source: .github/renovate.json5
+        replace: false
       # Mergify configuration
       - .github/mergify.yml
       # Build files
@@ -91,7 +92,8 @@ group:
         exclude: |
           repo-files-sync.yml
       # Renovate bot configuration
-      - .github/renovate.json5
+      - source: .github/renovate.json5
+        replace: false
       # Mergify configuration
       - .github/mergify.yml
       # Build files
