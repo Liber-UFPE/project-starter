@@ -39,6 +39,17 @@
       ],
       groupName: "Java / Apache Tika",
       groupSlug: "java-apache-tika"
+    },
+    {
+      matchPackagePrefixes: [
+        "org.jetbrains.kotlin",
+        "com.google.devtools.ksp",
+      ],
+      matchSourceUrls: [
+        "https://github.com/JetBrains/kotlin"
+      ],
+      groupName: "Kotlin / Plugins",
+      groupSlug: "kotlin-plugins"
     }
   ]
 }
