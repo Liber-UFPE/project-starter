@@ -45,6 +45,7 @@ group:
       - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
       - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
       - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/XContentTypeOptionsFilter.kt
       - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
       - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
       - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
@@ -60,9 +61,11 @@ group:
       - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
       - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
       - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
+      - src/test/kotlin/br/ufpe/liber/controllers/XContentTypeOptionsFilterTest.kt
       - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
         replace: false
       - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
+      - src/test/kotlin/br/ufpe/liber/HttpClientExtensions.kt
       - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
       - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
       - src/test/resources/public/test-assets-metadata.json
@@ -124,6 +127,7 @@ group:
       - src/main/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandler.kt
       - src/main/kotlin/br/ufpe/liber/controllers/ErrorsController.kt
       - src/main/kotlin/br/ufpe/liber/controllers/KteController.kt
+      - src/main/kotlin/br/ufpe/liber/controllers/XContentTypeOptionsFilter.kt
       - src/main/kotlin/br/ufpe/liber/views/CSPHelper.kt
       - src/main/kotlin/br/ufpe/liber/views/ViewsHelper.kt
       - source: src/main/kotlin/br/ufpe/liber/views/LinksHelper.kt
@@ -139,9 +143,11 @@ group:
       - src/test/kotlin/br/ufpe/liber/controllers/AssetsControllerTest.kt
       - src/test/kotlin/br/ufpe/liber/controllers/DefaultExceptionHandlerTest.kt
       - src/test/kotlin/br/ufpe/liber/controllers/ErrorsControllerTest.kt
+      - src/test/kotlin/br/ufpe/liber/controllers/XContentTypeOptionsFilterTest.kt
       - source: src/test/kotlin/br/ufpe/liber/ApplicationTest.kt
         replace: false
       - src/test/kotlin/br/ufpe/liber/KteWritableExtensions.kt
+      - src/test/kotlin/br/ufpe/liber/HttpClientExtensions.kt
       - src/test/kotlin/br/ufpe/liber/TemplatesFactoryTest.kt
       - src/test/kotlin/br/ufpe/liber/ProjectConfig.kt
       - src/test/resources/public/test-assets-metadata.json
