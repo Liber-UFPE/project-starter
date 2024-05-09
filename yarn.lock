@@ -989,8 +989,8 @@ __metadata:
   linkType: hard
 
 "@stylistic/eslint-plugin-js@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@stylistic/eslint-plugin-js@npm:2.0.0"
+  version: 2.1.0
+  resolution: "@stylistic/eslint-plugin-js@npm:2.1.0"
   dependencies:
     "@types/eslint": "npm:^8.56.10"
     acorn: "npm:^8.11.3"
@@ -998,7 +998,7 @@ __metadata:
     espree: "npm:^10.0.1"
   peerDependencies:
     eslint: ">=8.40.0"
-  checksum: 10c0/510011f1045b548ada5f6c6a419ef93ac593a2c606bfccffaaef54982525bd6e04d193a1d8270a117c597bd9da9e6e5f05c37d9ca43855e334878c6792aa125c
+  checksum: 10c0/3817b98638e045540499a0bdba177fe2fd629d9532996dac155f3ab53b0d075319a90e305d59cbdafb7e19a2a6b5cecb076ec0bf6c81df846825c4d4d0d9261e
   languageName: node
   linkType: hard
 
