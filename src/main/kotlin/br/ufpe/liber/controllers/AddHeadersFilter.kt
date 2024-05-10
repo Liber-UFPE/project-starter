@@ -9,9 +9,14 @@ import io.micronaut.http.filter.ServerFilterPhase
 
 @ServerFilter(Filter.MATCH_ALL_PATTERN)
 @Suppress("CLASS_NAME_INCORRECT")
-class XContentTypeOptionsFilter : Ordered {
+class AddHeadersFilter : Ordered {
     @ResponseFilter
-    fun addHeader(res: MutableHttpResponse<Any>) = res.header("X-Content-Type-Options", "nosniff")
+    fun addHeader(res: MutableHttpResponse<Any>) = res.headers(
+        mapOf(
+            "X-Content-Type-Options" to "nosniff",
+            "Referrer-Policy" to "no-referrer, strict-origin-when-cross-origin",
+        ),
+    )
 
     override fun getOrder(): Int = ServerFilterPhase.LAST.order()
 }
