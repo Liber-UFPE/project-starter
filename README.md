@@ -3,7 +3,6 @@
 # Project Starter
 
 ![CI Workflow](https://github.com/Liber-UFPE/project-starter/actions/workflows/build.yml/badge.svg?branch=main)
-![Main Workflow](https://github.com/Liber-UFPE/project-starter/actions/workflows/main.yml/badge.svg?branch=main)
 
 Esse é um template para iniciar projetos. Há algumas coisas que você precisa fazer após criar seu repositório usando este template:
 
