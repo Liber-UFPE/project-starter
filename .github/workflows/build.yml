@@ -288,7 +288,6 @@ jobs:
     needs:
       - test
       - test-docker-image
-      - check-if-release-branch
     # This job also has an output that can be used by downstream jobs.
     # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
     outputs:
