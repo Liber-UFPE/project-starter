@@ -126,6 +126,17 @@ jobs:
           jobSummary: true
           format: markdown
           fail: true
+
+  dependency-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 'Dependency Review'
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          fail-on-scopes: runtime
+
   compile:
     name: Build / compile
     runs-on: ubuntu-latest
@@ -137,6 +148,8 @@ jobs:
       - eslint
       - esbuild-check
       - gradle-wrapper-validation
+      - validate-external-links
+      - dependency-review
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
