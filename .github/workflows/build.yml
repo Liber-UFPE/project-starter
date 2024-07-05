@@ -139,7 +139,6 @@ jobs:
       - esbuild-check
       - gradle-wrapper-validation
       - validate-external-links
-      - dependency-review
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
