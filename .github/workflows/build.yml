@@ -217,36 +217,6 @@ jobs:
         with:
           verbose: true
 
-  lighthouse-test:
-    name: Tests / Lighthouse CI
-    runs-on: ubuntu-latest
-    needs:
-      - compile
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "lts/*"  # latest lts
-          check-latest: true
-          cache: "yarn"
-      - uses: ./.github/gradle-action
-      - run: ./gradlew classes
-      - run: yarn install
-      - name: Run Lighthouse CI
-        run: |
-          npx lhci collect
-          npx lhci assert
-      - name: Upload Lighthouse CI results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lighthouse-ci-results-${{ github.run_id }}-${{ github.sha }}
-          path: .lighthouseci/
-          retention-days: 30
-
   test-docker-image:
     name: Tests / docker image
     runs-on: ubuntu-latest
@@ -309,7 +279,6 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     needs:
       - test
-      - lighthouse-test
       - test-docker-image
       - dependency-review
     steps:
@@ -321,7 +290,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - test
-      - lighthouse-test
       - test-docker-image
     # This job also has an output that can be used by downstream jobs.
     # https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs

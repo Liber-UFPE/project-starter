@@ -21,8 +21,6 @@ group:
       # Mergify configuration
       - .github/mergify.yml
       # Build files
-      - source: lighthouserc.js
-        replace: false
       - source: Dockerfile
         replace: false
       - detekt-config.yml
@@ -103,8 +101,6 @@ group:
       - source: assets-pipeline.mjs
         replace: false
       - tailwind.config.js
-      - source: lighthouserc.js
-        replace: false
       - source: Dockerfile
         replace: false
       - detekt-config.yml
