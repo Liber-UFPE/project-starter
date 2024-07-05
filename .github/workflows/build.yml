@@ -306,6 +306,8 @@ jobs:
   gh-dependency-graph:
     name: Generate and Submit Dependency Graph
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     needs:
       - generate-tag-name
     steps:
