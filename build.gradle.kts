@@ -4,9 +4,9 @@ import com.lordcodes.turtle.shellRun
 import java.lang.System.getenv
 
 plugins {
-    kotlin("jvm") version "2.0.10"
-    kotlin("plugin.allopen") version "2.0.10"
-    kotlin("plugin.serialization") version "2.0.10"
+    kotlin("jvm") version "2.0.20"
+    kotlin("plugin.allopen") version "2.0.20"
+    kotlin("plugin.serialization") version "2.0.20"
     id("com.google.devtools.ksp") version "2.0.10-1.0.24"
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.2"
