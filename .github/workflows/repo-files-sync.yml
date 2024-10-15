@@ -3,10 +3,9 @@ name: Sync Files
 
 # yamllint disable rule:truthy
 on:
-  workflow_run:
-    types: [ completed ]
-    workflows: [ CI ]
-    branches: [ main ]
+  schedule:
+    # At 23:59 on Friday.
+    - cron: "59 23 * * FRI"
 # yamllint enable rule:truthy
 
 jobs:
