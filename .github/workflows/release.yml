@@ -100,6 +100,7 @@ jobs:
       - generate-tag-name
     steps:
       - uses: actions/checkout@v4
+      - run: corepack enable
       - uses: ./.github/gradle-action
       - uses: gradle/actions/dependency-submission@v4
 
