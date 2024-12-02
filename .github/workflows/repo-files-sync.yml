@@ -3,9 +3,11 @@ name: Sync Files
 
 # yamllint disable rule:truthy
 on:
+  # To enable the workflow to be triggered manually
+  workflow_dispatch:
   schedule:
-    # At 23:59 on Friday.
-    - cron: "59 23 * * FRI"
+    # At 23:00 on Friday.
+    - cron: "0 23 * * FRI"
 # yamllint enable rule:truthy
 
 jobs:
