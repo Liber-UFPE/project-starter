@@ -23,7 +23,7 @@ env:
 concurrency:
   # This workflow cuts releases, so we want only a
   # single concurrent workflow run per branch/tag/etc.
-  group: ${{ github.ref }}
+  group: release-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

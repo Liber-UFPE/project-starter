@@ -19,12 +19,6 @@ env:
     -Dsonar.gradle.skipCompile=true
     -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"'
 
-concurrency:
-  # This workflow cuts releases, so we want only a
-  # single concurrent workflow run per branch/tag/etc.
-  group: ${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   diktat:
     name: Code Analysis / diktat
