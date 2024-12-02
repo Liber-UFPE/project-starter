@@ -12,6 +12,7 @@ group:
       - .stylelintrc.mjs
       - eslint.config.mjs
       # GitHub Actions workflows
+      - .github/gradle-action/action.yml
       - source: .github/workflows
         destination: .github/workflows
         exclude: |
@@ -87,6 +88,7 @@ group:
       - .stylelintrc.mjs
       - eslint.config.mjs
       # GitHub Actions workflows
+      - .github/gradle-action/action.yml
       - source: .github/workflows
         destination: .github/workflows
         exclude: |
