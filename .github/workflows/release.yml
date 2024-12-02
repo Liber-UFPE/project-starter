@@ -35,6 +35,7 @@ jobs:
       OWNER: ${{ github.repository_owner }}
       REPO: ${{ github.event.repository.name }}
     steps:
+      - uses: actions/checkout@v4
       # language="shell script"
       - run: |
           checks=20
