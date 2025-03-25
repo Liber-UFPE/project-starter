@@ -24,7 +24,7 @@ plugins {
     id("org.unbroken-dome.test-sets") version "4.1.0"
     // SonarQube/SonarCloud plugin
     // https://github.com/SonarSource/sonar-scanner-gradle
-    id("org.sonarqube") version "6.0.1.5171"
+    id("org.sonarqube") version "6.1.0.5360"
     // Add diktat
     // https://github.com/marcospereira/diktat
     id("com.saveourtool.diktat") version "2.0.0"
