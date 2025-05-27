@@ -1,4 +1,4 @@
-FROM gradle:8.14.0-jdk21 AS build
+FROM gradle:8.14.1-jdk21 AS build
 
 # Install Node JS
 RUN apt-get update -y && apt-get install --no-install-recommends -y curl \
