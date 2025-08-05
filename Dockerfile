@@ -26,7 +26,7 @@ RUN gradle -Dsonar.gradle.skipCompile=true --console plain --no-configuration-ca
       clean shadowJar -x test -x accessibilityTest \
       && mv -vf build/libs/*.jar app.jar
 
-FROM eclipse-temurin:21.0.7_6-jre-alpine
+FROM eclipse-temurin:21.0.8_9-jre-alpine
 
 LABEL org.opencontainers.image.description="Project Starter Java Application Service"
 LABEL org.opencontainers.image.url="https://github.com/Liber-UFPE/project-starter/"
