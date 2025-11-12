@@ -2340,15 +2340,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"flowbite@npm:^3.0.0":
-  version: 3.1.2
-  resolution: "flowbite@npm:3.1.2"
+"flowbite@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "flowbite@npm:4.0.0"
   dependencies:
     "@popperjs/core": "npm:^2.9.3"
     flowbite-datepicker: "npm:^1.3.1"
     mini-svg-data-uri: "npm:^1.4.3"
     postcss: "npm:^8.5.1"
-  checksum: 10c0/5e617695162e8800f874281fe9ac205cbadc1c1413eccc760efb19c51bc6cfb337e3af70bfda6ed49b586b24e6af01a99b3a87c633688a77924516bc4d08795b
+    tailwindcss: "npm:^4.1.12"
+  checksum: 10c0/ffa54cfee6ba38638899b80330720d18766004734e4d527b5bf4ca7d1b45280c5607eeb6868a731a2bb05e81a8fc0b62ee9aa693331156ffdb88b2192fce10dc
   languageName: node
   linkType: hard
 
@@ -3671,7 +3672,7 @@ __metadata:
     esbuild: "npm:0.25.12"
     esbuild-sass-plugin: "npm:^3.0.0"
     eslint: "npm:^9.0.0"
-    flowbite: "npm:^3.0.0"
+    flowbite: "npm:^4.0.0"
     globals: "npm:^16.0.0"
     htmx.org: "npm:^2.0.0"
     postcss: "npm:^8.4.35"
@@ -4430,6 +4431,13 @@ __metadata:
     tailwind: lib/cli.js
     tailwindcss: lib/cli.js
   checksum: 10c0/230c0815d0b981f4952d1902e025d7571929e5fc133b4bb4fcbbc3b642e7ab0cecb9687f80f311afd0db07df8f383ce4317b3ca75ae93156c2ddc777e59fc31b
+  languageName: node
+  linkType: hard
+
+"tailwindcss@npm:^4.1.12":
+  version: 4.1.17
+  resolution: "tailwindcss@npm:4.1.17"
+  checksum: 10c0/1fecf618ba9895e068e5a6d842b978f56a815bc849a28338cebbcb07b13df763715c2f8848def938403c73d59f08ffff33a4b83a977a9e38fa56adc60d1d56c8
   languageName: node
   linkType: hard
 
